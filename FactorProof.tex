@@ -1,0 +1,197 @@
+\def\AS#1{{\color{red}#1}}  % print O in red
+\def\AS#1{}       % don't print O
+\def\red#1{{\color{red}#1}}
+\def\green#1{{\color{green}#1}}
+\def\redtt{\color{red}\tt}
+\def\bluett{\color{blue}\tt}
+\def\bottom{\perp}
+\font\manual=manfnt
+\def\dbend{{\manual\char127}}
+\def\eqq{{\buildrel?\over=}}
+%\def\B{\red{$\cal B$}}
+\def\C{\red{$\cal C$}}
+\def\J{\red{$\cal J$}}
+\def\I{{\cal I}}
+\def\Z{{\bf Z}}
+\def\Q{{\bf Q}}
+%\def\C{{\bf C}}
+\def\N{{\bf N}}
+\def\R{{\bf R}}
+\def\Oo{{\cal O}}
+\def\CL{\mathop{\rm CL}}
+\def\const{\mathop{\rm const}}
+\def\erf{\mathop{\rm erf}}
+\def\res{\mathop{\rm res}\nolimits}
+\def\Proj{\mathop{\rm Proj}}
+\def\IDA{{}_{\rm DA}\int}
+\def\DDA{D_{\rm DA}}
+\def\arctanDA{\arctan_{\rm DA}}
+\def\logDA{\log_{\rm DA}}
+\def\cDA{constant${}_{\rm DA}$}
+\def\fracDDA#1#2{\frac{{\rm d}#1}{{\rm d}_{\rm DA}#2}}
+\def\Ied{{}_{\epsilon\delta}\int}
+\def\Ded{D_{\epsilon\delta}}
+\def\arctaned{\arctan_{\epsilon\delta}}
+\def\loged{\log_{\epsilon\delta}}
+\def\fracDed#1#2{\frac{{\rm d}#1}{{\rm d}_{\epsilon\delta}#2}}
+\documentclass{llncs}  
+\usepackage[hyphens]{url}
+%\usepackage[final]{pdfpages}
+\newcommand{\Qxiblock}[2]{Q_{#1} x_{#1,1},\ldots,x_{#1,#2_{#1}}}
+%\usepackage{tikz}
+\usepackage{hyperref}
+\newtheorem{observation}[definition]{Observation}
+\newtheorem{RQ}{Research Question}
+%\mode<presentation>
+
+\usepackage{verbatim}
+%\usepackage{enumitem}
+%\newtheorem{problem}{Problem}
+\usepackage{color}
+\bibliographystyle{alpha}
+\title{Proving an Execution of an Algorithm Correct?}
+\author{Edgar Costa \and James Harold Davenport\\% \& Tim French\\
+\tt edgarc@mit.edu  masjhd@bath.ac.uk}
+%(Thanks to RJB for the improved title)}
+\institute{M.I.T. \and University of Bath, Bath BA2 7AY, UK}%(visiting Waterloo)}
+\date{October 2023}
+\begin{document}
+\maketitle
+\begin{abstract}
+Many algorithms in computer algebra and beyond produce answers. For some of these, we have formal proofs of the correctness of the algorithm, and for others it is easy to verify that the answer is correct. Other algorithms produce either an answer or a proof that no such answer exists. It may still be easy to verify that the answer is correct, but what about the ``no such answer'' case. A slight variant on ``no such answer'' is given by polynomial factoring, where we say ``$f$ factors as $g\cdot h$'' but imply ``and no more'', i.e. that $g$ and $h$ don't factor. How might an algebra system help produce such a proof?
+\end{abstract}
+\section{Introduction}
+\section{Polynomial Factorisation: the theory}\label{sec:Zass}
+For simplicity we will consider factorisation over the integers of polynomials with integer coefficients. Algebraic number fields add complications, but not, we believe, fundamental ones. The problem of factorisation is normally stated as follows.
+\begin{problem}[Factorisation]\label{prob:fact}
+Given $f\in\Z[x_1,\ldots,x_n]$, write $f=\prod f_i$ where the $f_i$ are \emph{irreducible} elements of $\Z[x_1,\ldots,x_n]$.
+\end{problem}
+Verifying that $f=\prod f_i$ is, at least relatively, easy. The hard part is verifying that the $f_i$ are \emph{irreducible}. The author knows of no implementation of polynomial factorisation that produces any evidence, let alone a proof, of this. 
+\iffalse
+In the framework of Problem \ref{Prob:1}, we could phrase this as 
+\begin{problem}[Factorisation after Problem \ref{Prob:1}]\label{prob:fact-basic}
+Given $f\in\Z[x_1,\ldots,x_n]$, produce
+        \begin{description}
+                \item[either]a proper factor $g$ of $f$,
+\item[or]$\bottom$ indicating that no such $g$ exists.
+        \end{description}
+\end{problem}
+\fi
+\subsection{Univariate Polynomials}
+We may as well assume $f$ is square-free (else factor each square-free factor separately). Then the basic algorithm goes back to \cite{Zassenhaus1969}: step M is a later addition \cite{Musser1975a}, and the  H' variants are also later.
+\begin{enumerate}
+\item Choose a prime $p$ (not dividing the leading coefficient of $f$) such that $f\pmod p$ is also square-free. For technical reasons we tend to avoid $p=2$.
+\item\label{step:p} Factor $f$ modulo $p$ as $\prod f_i^{(1)} \pmod p$.
+\item[M]Take five such $p$ and compare the factorisations.
+\item If $f$ can be shown to be irreducible from modulo $p$ factorisations, return $f$.
+\item Let $B$ be such that any factor of $f$ has coefficients less than $B$ in magnitude, and $n$ such that $p^n\ge 2B$. Generally the Landau--Mignotte bound \cite{Landau1905,Mignotte1974}.
+\item Use Hensel's Lemma to lift the factorisation to $f=\prod f_i^{(n)} \pmod {p^n}$
+\item[H]\label{step:H} Starting with singletons and working up (pairs, triples etc. \cite{Collins1979}), take subsets of the $f_i^{(n)}$, multiply them together and check whether, regarded as polynomials over $\Z$ with coefficients in $[-B,B]$, they divide $f$ --- if they do, declare that they are irreducible factors of $f$.
+\item[H']\label{step:H'}Use some alternative technique, originally \cite{Lenstraetal1982}, but now e.g. \cite{Abbottetal2000a} to find the true factor corresponding to $f_1^{(n)}$, remove $f_1^{(n)}$ and the other $f_i^{(n)}$ corresponding to this factor, and repeat.
+\item[\dbend]In practice, there are a lot of optimisations, which would greatly complicate a proof of correctness of an implementation of this algorithm.
+\begin{quote}
+We found that, although the Hensel construction is basically neat and simple in theory,
+the fully optimised version we finally used was as nasty a piece of code to write and
+debug as any we have come across \cite{MooreNorman1981}.
+\end{quote}
+\end{enumerate}
+Since if $f$ is irreducible modulo $p$, it is irreducible over the integers, the factors produced from singletons in step \ref{step:H} are easily proved to be irreducible.  Unfortunately, the chance that an irreducible polynomial of degree $n$ is irreducible modulo $p$ is $1/n$. Hence the factorisation in step \ref{step:p} is very likely to be an overestimate, in that we have more factors modulo $p$ than over the integers.
+\par
+Musser introduced step M, saying we should take five\footnote{Subsequently \cite{LuczakPyber1997} showed that asymptotically the correct number is seven, not Musser's experimentally-derived five.} primes $p_i$ and compare the factorisations. This is more than just taking the best (where the chance of irreducibility would then be roughly $5/n$). For example, if $f$ factors as $3\times 1$ (i.e. a factor of degree 3 times a linear factor) modulo $p_1$ and $2\times 2$ modulo $p_2$, then it must in fact be irreducible. For a generic polynomial (Galois group $S_n$) this is very likely to prove $f$ irreducible.
+\par
+However, \cite{SwinnertonDyer1969} showed that there are irreducible polynomials which factor \emph{compatibly} modulo every prime. The easiest example is $x^4+1$, which factors as $2\times 2$ (or $2\times 1^2$ or $1^4$) modulo every prime, which is also compatible with a $2\times 2$ factorisation over the integers, and the recombination part of step \ref{step:H} may be required.
+\par
+Hence we can see that a factorisation algorithm could, even though no known implementation does, relatively easily produce the required information for a proof of irreducibility unless the recombination step is required. Note that \emph{verifying} the Hensel lifting, the ``nasty piece'' from \cite{MooreNorman1981} is easy: the factors just have to have the right degrees from the factorisation of $f \pmod p$ and multiply to give $f\pmod{p^n}$.
+\iffalse
+\subsection{Comments on Research Question \ref{RQ:2}}\label{sec:RQ2}
+We have seen that the time required to produce the factorisation (and $\bottom$ that each factor is irreducible) can vary widely, depending on whether or not recombination after Hensel lifting is required. In fact there are several possibilities, as in Table \ref{tab:fact}.
+\begin{table}
+\caption{Possible factorisation routes\label{tab:fact}}
+\begin{tabular}{l|l|l|l|l}
+Case&description&\multispan3{\hfil Times for\hfil}\\
+&&result&result + proof&verify\\
+1:&irreducible by Musser&$t_1$&$t_1+\epsilon$&$O(t_1)$\\
+2:&factors, each irreducible as above&$t_2$&$t_2+\epsilon$&$O(t_2)$\\
+3:&factors, but not trivially Musser&$t_2$&$t_2+\epsilon$&$O(t_2)$ with work\\
+4:&factors, needs recombining&$t_4$&$t_4+\epsilon$&$O(t_4)$, hard?\\
+\end{tabular}\\
+\end{table}
+\begin{itemize}
+\item[2.]A typical example would be where, modulo some $p$, $f$ factors into three irreducible factors, of degrees 3,5,7, and the other primes are consistent with this. Then we have to lift the factors to be modulo a suitable $N=p^n$ (time $O(N^3)$ with classical arithmetic), when we will discover that these are indeed factors. They are then irreducible by the Musser test. Verifying that this is a factorisation takes time $O(N^2)$ with classical arithmetic), so in this case the verification is asymptotically cheaper.
+\item[3.]A typical example would be where, modulo some $p$, $f$ factors into three irreducible factors, of degrees 3,5,8, and the other primes are consistent with this. Then we lift as above, and verify these are factors. The Musser test on the original polynomial does not directly prove that the 8 is irreducible (because a 3,5 split is feasible), but repeating the Musser test on that factor will actually prove it irreducible. With this change, the timings are the same as case 2.
+\item[4.]Swinnerton-Dyer polynomials are the classic case. If we use classic recombination \cite{Zassenhaus1969} then the verification is essentially equivalent to the initial computation. More advanced methods \cite{Lenstraetal1982,Abbottetal2000a} would require proving their results in the prover, but this would only need to be done once. This might be hard, but is currently unknown.
+\end{itemize}
+There are many other possibilities, which depend essentially on the Galois groups of the factors of the polynomial. To the best of the author's knowledge, no work has been done on extending the theory of factoring (\cite[etc.]{DavenportSmith2000,LuczakPyber1997}) to retrospective verification.
+\fi
+\subsection{Multivariate Polynomials}
+The algorithm is basically similar, replacing primes by evaluations $x_i\rightarrow v_i$.  The difference is that, if $f(x_1,\ldots,x_n)$ is irreducible, then with probability 1, $f(x_1,v_2,\ldots,v_n)\in\Z[x_1]$ is also irreducible. Hence this is probably not significantly easier than the univariate case in terms of proving, unlike implementation \cite{MooreNorman1981}.
+\section{The practice: FLINT}
+We chose FLINT \cite{Flint2023a} as an open-source implementation with which the first author was familiar. The basic implementation of polynomial factorisation largely follows the scheme of \S\ref{sec:Zass}, but there are some differences.
+\begin{enumerate}
+\item Step M uses three primes.
+\item Step H checks the degree of the product to be verified against the list of possible degrees from M, and can therefore rule out a potential product.
+\end{enumerate}
+\section{Worked example}
+This polynomial is given in the Zassenhaus tests of FLINT.
+\begin{equation}
+\begin{array}{l}
+x^{62}+x^{61}+x^{60}-4 x^{59}-7 x^{58}-2 x^{57}-6 x^{56}-3 x^{55}-7 x^{54}+18 x^{53}+7 x^{52}\\+25 x^{51}-11 x^{50}+95 x^{49}+36 x^{48}+21 x^{47}+16 x^{46}+69 x^{45}+56 x^{44}+35 x^{43}\\+36 x^{42}+32 x^{41}+33 x^{40}+26 x^{39}-26 x^{38}-15 x^{37}-14 x^{36}-53 x^{35}-96 x^{34}\\+67 x^{33}+72 x^{32}-67 x^{31}+40 x^{30}-79 x^{29}-116 x^{28}-452 x^{27}-312 x^{26}\\-260 x^{25}-29 x^{24}-1393 x^{23}+327 x^{22}+69 x^{21}-28 x^{20}-241 x^{19}+230 x^{18}\\-54 x^{17}-309 x^{16}-125 x^{15}-74 x^{14}-450 x^{13}-69 x^{12}-3 x^{11}+66 x^{10}\\-27 x^{9}+73 x^{8}+68 x^{7}+50 x^{6}-63 x^{5}-1290 x^{4}+372 x^{3}+31 x^{2}-16 x +2
+\end{array}
+\end{equation}
+\begin{table}
+\caption{Factorisation shapes\label{tab:CZ}}
+\begin{tabular}{rll}
+Prime $p$\quad&Factor shape modulo $p$&Possible degrees\\
+5&2,2,7,12,19,20&2,4,7,9,11,12,14,16,19,20,21\dots\\
+7&1,1,1,3,4,5,6,7,7,13,14&1,2,3,4,5,6,7,8,9,10,11,12,\dots\\
+5 and 7&&no improvement\\
+11&2,2,2,10,19,27&2,4,6,10,12,14,16,19\\
+5,7,11&&2,4,12,14,16,19,21\dots
+\end{tabular}
+\end{table}
+This polynomial is square-free, but not square-free modulo 3. Hence step M, as adjusted, takes the first three primes in table \ref{tab:CZ}.
+\section{Towards a Formal Proof}
+\begin{theorem}[Landau--Mignotte Inequality
+\cite{Landau1905,Mignotte1974,Mignotte1982b}]\label{thm:LM}
+\index{Landau--Mignotte Inequality}
+\index{Inequality!Landau--Mignotte}
+Let $Q = \sum_{i=0}^q{b_i x^i}$ be a divisor of the polynomial
+$P=\sum_{i=0}^p{a_ix^i}$ (where $a_i$ and $b_i$ are integers). Then
+\begin{equation}{eq:LM1}
+\max_{i=0}^q\left\vert b_i \right\vert \le
+\sum_{i=0}^q \left\vert b_i \right\vert \le
+2^q \left\vert b_q \over a_p \right\vert \sqrt{\sum_{i=0}^p{a_i^2}} .
+\end{equation}
+\end{theorem}
+%These results are corollaries of statements in Appendix \ref{app:LM}.
+\par
+If we regard $P$ as known and $Q$ as unknown, this formulation does not quite
+tell us about the unknowns in terms of the knowns, since there is some
+dependence on $Q$ on the right, but we can use a weaker form:
+\begin{equation}
+\sum_{i=0}^q \left\vert b_i \right\vert \le
+2^p \sqrt{\sum_{i=0}^p{a_i^2}} .
+\end{equation}
+
+\section*{Acknowledgements}The second author is supported by EPSRC grant EP/T015713.
+\bibliography{../../../../../jhd}
+
+\end{document}
+\section{}
+
+\begin{itemize}
+\item 
+\end{itemize}
+
+	\begin{description}
+		\item[]
+	\end{description}
+\section{}
+
+\begin{enumerate}
+\item 
+\item 
+\item 
+\item 
+\item 
+\end{enumerate}

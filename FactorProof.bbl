@@ -1,0 +1,73 @@
+\begin{thebibliography}{ASZ00}
+
+\bibitem[ASZ00]{Abbottetal2000a}
+J.A. Abbott, V.~Shoup, and P.~Zimmermann.
+\newblock {Factorization in $\Z[x]$: The Searching Phase}.
+\newblock In C.~Traverso, editor, {\em Proceedings ISSAC 2000}, pages 1--7,
+  2000.
+
+\bibitem[Ber70]{Berlekamp1970}
+E.R. Berlekamp.
+\newblock {Factoring Polynomials over Large Finite Fields}.
+\newblock {\em Math. Comp.}, 24:713--735, 1970.
+
+\bibitem[Col79]{Collins1979}
+G.E. Collins.
+\newblock {Factoring univariate integral polynomials in polynomial average
+  time}.
+\newblock In {\em Proceedings EUROSAM 79}, pages 317--329, 1979.
+
+\bibitem[Lan05]{Landau1905}
+E.~Landau.
+\newblock {Sur Quelques Th\'eor\`emes de M. Petrovic Relatif aux Z\'eros des
+  Fonctions Analytiques}.
+\newblock {\em Bull. Soc. Math. France}, 33:251--261, 1905.
+
+\bibitem[LLL82]{Lenstraetal1982}
+A.K. Lenstra, H.W. {Lenstra Jun.}, and L.~Lov\'asz.
+\newblock {Factoring Polynomials with Rational Coefficients}.
+\newblock {\em Math. Ann.}, 261:515--534, 1982.
+
+\bibitem[LP97]{LuczakPyber1997}
+T.~\L{}uczak and L.~Pyber.
+\newblock {On random generation of the symmetric group}.
+\newblock In {\em Proceedings Combinatorics geometry and probability}, pages
+  463--470, 1997.
+
+\bibitem[Mig74]{Mignotte1974}
+M.~Mignotte.
+\newblock {An Inequality about Factors of Polynomials}.
+\newblock {\em Math. Comp.}, 28:1153--1157, 1974.
+
+\bibitem[Mig82]{Mignotte1982b}
+M.~Mignotte.
+\newblock {Some Useful Bounds}.
+\newblock {\em Symbolic and Algebraic Computation (Computing Supplementum 4)
+  Springer-Verlag}, pages 259--263, 1982.
+
+\bibitem[MN81]{MooreNorman1981}
+P.M.A. Moore and A.C. Norman.
+\newblock {Implementing a Polynomial Factorization and GCD Package}.
+\newblock In {\em Proceedings SYMSAC 81}, pages 109--116, 1981.
+
+\bibitem[Mus75]{Musser1975a}
+D.R. Musser.
+\newblock {Multivariate Polynomial Factorization}.
+\newblock {\em J. ACM}, 22:291--308, 1975.
+
+\bibitem[SD69]{SwinnertonDyer1969}
+H.P.F. Swinnerton-Dyer.
+\newblock {Letter to E.R. Berlekamp}.
+\newblock {\em Mentioned in \cite{Berlekamp1970}}, 1969.
+
+\bibitem[tea23]{Flint2023a}
+The~{FLINT} team.
+\newblock {\em {FLINT}: {F}ast {L}ibrary for {N}umber {T}heory}, 2023.
+\newblock Version 2.9.0, \url{https://flintlib.org}.
+
+\bibitem[Zas69]{Zassenhaus1969}
+H.~Zassenhaus.
+\newblock {On Hensel Factorization I}.
+\newblock {\em J. Number Theory}, 1:291--311, 1969.
+
+\end{thebibliography}
