@@ -153,7 +153,11 @@ Prime $p$\quad&Factor shape modulo $p$&Possible degrees\\
 13&1,2,3,10,17,29&$1,\cdots,6,10,\cdots,23,27,\cdots,35,\ldots$\\
 5,7,11,13&&no improvement\\
 17&4,8,9,18,23&4,8,9,12,13,17,18,21,22,23,26,27,31,\dots\\
-5,7,11,13,17&&4,12,21,23,27,31
+5,7,11,13,17&&4,12,21,23,27,31,\dots\\
+19&1,4,4,10,12,13,18&1,4,5,8,9,10,11,12,13,14,15,16,17,18,19,20,21\\
+5,7,11,13,17,19&&no improvement\\
+23&1,1,1,4,10,20,25&$1,\cdots,7,10,\cdots,17,20,\cdots,27,30,31,\ldots$\\
+5,7,11,13,17,19,23&&no improvement\\
 \end{tabular}
 \end{table}
 \begin{description}
@@ -163,8 +167,21 @@ This polynomial is square-free, but not square-free modulo 3. Hence step M, as a
 \item[Bound]We use $11^{23}$.  \todo{JHD: should we explain this?}
 \item[Try $r=1$]We see if each single factor modulo $11^{23}$, regarded over $\Z$ and made primitive, is a factor, \emph{except} the degree 10 factor, which is ruled out by Table \ref{tab:CZ}. Note that, if we had used 5 primes, as recommended by \cite{Musser1975a}, the extended version of Table \ref{tab:CZ} would also have ruled out the degree 19 factor, and the degree 2 factors.
 \item[Try $r=2$]We see if each pair of factors: 27+2 (three options), 2+2 (three options), 10+2 (three options), 27+19, 19+2 (three times), 19+10 is a factor, \emph{except} the degree 27+10, which is ruled out by Table \ref{tab:CZ} [degree 37, so co-factor would have degree 25, which is ruled out. 5 primes would also have ruled out 27+2 (three options), 27+19 and 19+10.
-\item[Try $r=3$]We make one unsuccessful attempt with a degree 31 combination, then we find a successful one.
+\item[Try $r=3$]We make one unsuccessful attempt with a degree 31 combination (27+2+2), then we find a successful one.
 \end{description}
+\subsection{Digression about how many primes}
+\begin{table}
+\caption{Factorisation shortcuts\label{tab:shortcut}}
+\begin{tabular}{rlcc}
+$p$&raw&using 3 primes&using 5 primes\\
+11&6/15&5/14&1/9\\
+17&5/10&---&2/3\\
+\end{tabular}
+\end{table}
+We have seen that using 5 primes rather than Flint's choice of 3 would mean that several more recombinations could be ruled out.  But in fact, if we used 5 primes, we would also decide that $p=17$, with five factors, was a better choice than $p=11$, with six factors. As we can see in Table \ref{tab:shortcut},we would look at five combinations in all, versus ten with $p=11$ and five primes or nineteen with $p=11$ and three primes.
+\par
+Moving to seven primes doesn't help, as can be seen in Table \ref{tab:CZ}. We do get some progress at $p=41$ (11 primes),when the factorisation has degrees 2,2,4,23,31, ruling out possible degrees 12 and 21, leaving 4,23,27,31\dots{} as the options. $p=43$ then has factorisation degrees 1,3,3,27,28, ruling out 23. The next progress is at $p=59$, with factorisation shapes 1,5,8,17,31, ruling out both 4 and 27, thus forcing a 31/31 split.
+
 \section{Towards a Formal Proof}
 We need various results which we suggest should be proved as ``baseline'' results: we call these ``theorems''.
 \begin{theorem}[Landau--Mignotte Inequality
