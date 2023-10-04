@@ -82,12 +82,12 @@ Given $f\in\Z[x_1,\ldots,x_n]$, produce
 We may as well assume $f$ is square-free (else factor each square-free factor separately). Then the basic algorithm goes back to \cite{Zassenhaus1969}: step M is a later addition \cite{Musser1975a}, and the  H' variants are also later.
 \begin{enumerate}
 \item Choose a prime $p$ (not dividing the leading coefficient of $f$) such that $f\pmod p$ is also square-free. For technical reasons we tend to avoid $p=2$.
-\item\label{step:p} Factor $f$ modulo $p$ as $\prod f_i^{(1)} \pmod p$.
+\item\label{step:p} Factor $f$ modulo $p$ as $\prod f_i^{(1)} \pmod p$. There are essentially two options here: Berlekamp ``small prime'' \cite{Berlekamp1967} and the Cantor--Zassenhaus Las Vegas algorithm \cite{CantorZassenhaus1981}.
 \item[M]Take five such $p$ and compare the factorisations.
 \item If $f$ can be shown to be irreducible from modulo $p$ factorisations, return $f$.
 \item Let $B$ be such that any factor of $f$ has coefficients less than $B$ in magnitude, and $n$ such that $p^n\ge 2B$. Generally the Landau--Mignotte bound \cite{Landau1905,Mignotte1974}.
 \item Use Hensel's Lemma to lift the factorisation to $f=\prod f_i^{(n)} \pmod {p^n}$
-\item[H]\label{step:H} Starting with singletons and working up (pairs, triples etc. \cite{Collins1979}), take subsets of the $f_i^{(n)}$, multiply them together and check whether, regarded as polynomials over $\Z$ with coefficients in $[-B,B]$, they divide $f$ --- if they do, declare that they are irreducible factors of $f$.
+\item[H]\label{step:H} Starting with singletons and working up (pairs, triples, \dots{} $r$-tuples \cite{Collins1979}), take subsets of the $f_i^{(n)}$, multiply them together and check whether, regarded as polynomials over $\Z$ with coefficients in $[-B,B]$, they divide $f$ --- if they do, declare that they are irreducible factors of $f$.
 \item[H']\label{step:H'}Use some alternative technique, originally \cite{Lenstraetal1982}, but now e.g. \cite{Abbottetal2000a} to find the true factor corresponding to $f_1^{(n)}$, remove $f_1^{(n)}$ and the other $f_i^{(n)}$ corresponding to this factor, and repeat.
 \item[\dbend]In practice, there are a lot of optimisations, which would greatly complicate a proof of correctness of an implementation of this algorithm.
 \begin{quote}
@@ -161,6 +161,9 @@ Prime $p$\quad&Factor shape modulo $p$&Possible degrees\\
 This polynomial is square-free, but not square-free modulo 3. Hence step M, as adjusted, takes the first three primes in table \ref{tab:CZ}.
 \item[Choice]We take $p=11$, hence factors of degree 2,2,2,10,19,27. 
 \item[Bound]We use $11^{23}$.  \todo{JHD: should we explain this?}
+\item[Try $r=1$]We see if each single factor modulo $11^{23}$, regarded over $\Z$ and made primitive, is a factor, \emph{except} the degree 10 factor, which is ruled out by Table \ref{tab:CZ}. Note that, if we had used 5 primes, as recommended by \cite{Musser1975a}, the extended version of Table \ref{tab:CZ} would also have ruled out the degree 19 factor, and the degree 2 factors.
+\item[Try $r=2$]We see if each pair of factors: 27+2 (three options), 2+2 (three options), 10+2 (three options), 27+19, 19+2 (three times), 19+10 is a factor, \emph{except} the degree 27+10, which is ruled out by Table \ref{tab:CZ} [degree 37, so co-factor would have degree 25, which is ruled out. 5 primes would also have ruled out 27+2 (three options), 27+19 and 19+10.
+\item[Try $r=3$]We make one unsuccessful attempt with a degree 31 combination, then we find a successful one.
 \end{description}
 \section{Towards a Formal Proof}
 We need various results which we suggest should be proved as ``baseline'' results: we call these ``theorems''.

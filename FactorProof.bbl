@@ -6,6 +6,11 @@ J.A. Abbott, V.~Shoup, and P.~Zimmermann.
 \newblock In C.~Traverso, editor, {\em Proceedings ISSAC 2000}, pages 1--7,
   2000.
 
+\bibitem[Ber67]{Berlekamp1967}
+E.R. Berlekamp.
+\newblock {Factoring Polynomials over Finite Fields}.
+\newblock {\em Bell System Tech. J.}, 46:1853--1859, 1967.
+
 \bibitem[Ber70]{Berlekamp1970}
 E.R. Berlekamp.
 \newblock {Factoring Polynomials over Large Finite Fields}.
@@ -16,6 +21,11 @@ G.E. Collins.
 \newblock {Factoring univariate integral polynomials in polynomial average
   time}.
 \newblock In {\em Proceedings EUROSAM 79}, pages 317--329, 1979.
+
+\bibitem[CZ81]{CantorZassenhaus1981}
+D.G. Cantor and H.~Zassenhaus.
+\newblock {A New Algorithm for Factoring Polynomials over Finite Fields}.
+\newblock {\em Math. Comp.}, 36:587--592, 1981.
 
 \bibitem[Lan05]{Landau1905}
 E.~Landau.
