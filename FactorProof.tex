@@ -139,6 +139,7 @@ This polynomial is given in the Zassenhaus tests of FLINT.
 x^{62}+x^{61}+x^{60}-4 x^{59}-7 x^{58}-2 x^{57}-6 x^{56}-3 x^{55}-7 x^{54}+18 x^{53}+7 x^{52}\\+25 x^{51}-11 x^{50}+95 x^{49}+36 x^{48}+21 x^{47}+16 x^{46}+69 x^{45}+56 x^{44}+35 x^{43}\\+36 x^{42}+32 x^{41}+33 x^{40}+26 x^{39}-26 x^{38}-15 x^{37}-14 x^{36}-53 x^{35}-96 x^{34}\\+67 x^{33}+72 x^{32}-67 x^{31}+40 x^{30}-79 x^{29}-116 x^{28}-452 x^{27}-312 x^{26}\\-260 x^{25}-29 x^{24}-1393 x^{23}+327 x^{22}+69 x^{21}-28 x^{20}-241 x^{19}+230 x^{18}\\-54 x^{17}-309 x^{16}-125 x^{15}-74 x^{14}-450 x^{13}-69 x^{12}-3 x^{11}+66 x^{10}\\-27 x^{9}+73 x^{8}+68 x^{7}+50 x^{6}-63 x^{5}-1290 x^{4}+372 x^{3}+31 x^{2}-16 x +2
 \end{array}
 \end{equation}
+\cite{Konovalev2023a} quotes a computation by Max Horn in MAGMA that the Galois group )over $\Z$ is $S_{31}\times S_{31}$.
 \begin{table}
 \caption{Factorisation shapes\label{tab:CZ}}
 \begin{tabular}{rll}
@@ -183,6 +184,8 @@ We have seen that using 5 primes rather than Flint's choice of 3 would mean that
 Moving to seven primes doesn't help, as can be seen in Table \ref{tab:CZ}. We do get some progress at $p=41$ (11 primes),when the factorisation has degrees 2,2,4,23,31, ruling out possible degrees 12 and 21, leaving 4,23,27,31\dots{} as the options. $p=43$ then has factorisation degrees 1,3,3,27,28, ruling out 23. The next progress is at $p=59$, with factorisation shapes 1,5,8,17,31, ruling out both 4 and 27, thus forcing a 31/31 split.
 
 \section{Towards a Formal Proof}
+We will use Lean as our theorem prover, though the choice is probably not fundamental.
+\par
 We need various results which we suggest should be proved as ``baseline'' results: we call these ``theorems''.
 \begin{theorem}[Landau--Mignotte Inequality
 \cite{Landau1905,Mignotte1974,Mignotte1982b}]\label{thm:LM}
@@ -205,7 +208,12 @@ dependence on $Q$ on the right, but we can use a weaker form:
 \sum_{i=0}^q \left\vert b_i \right\vert \le
 2^p \sqrt{\sum_{i=0}^p{a_i^2}} .
 \end{equation}
-
+In practice, we use \cite{Abbott2013b} as our source for the bounds on factors.
+\par
+There are various algorithms for factoring polynomials modulo $p$, but all we need to do is verify that the factors given the verifier by the algebra system multiply correctly and are irreducible. The following theorem is probably the easiest way of doing that.
+\begin{theorem}[After \cite{CantorZassenhaus1981}]
+A square-free polynomial $f$ of degree $d$ modulo $p$ is irreducible if $\gcd(f,x^{p^i}-x)\equiv 1 \pmod p$  for $1\le i\le d/2$.
+\end{theorem}
 \section*{Acknowledgements}The second author is supported by EPSRC grant EP/T015713.
 \bibliography{../../../../../jhd}
 

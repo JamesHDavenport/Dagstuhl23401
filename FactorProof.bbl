@@ -1,5 +1,10 @@
 \begin{thebibliography}{ASZ00}
 
+\bibitem[Abb13]{Abbott2013b}
+J.A. Abbott.
+\newblock {Bounds on Factors in $\Z[x]$}.
+\newblock {\em J. Symbolic Comp.}, 50:532--563, 2013.
+
 \bibitem[ASZ00]{Abbottetal2000a}
 J.A. Abbott, V.~Shoup, and P.~Zimmermann.
 \newblock {Factorization in $\Z[x]$: The Searching Phase}.
