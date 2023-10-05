@@ -1,0 +1,210 @@
+\def\AS#1{{\color{red}#1}}  % print O in red
+\def\AS#1{}       % don't print O
+\def\red#1{{\color{red}#1}}
+\def\green#1{{\color{green}#1}}
+\def\redtt{\color{red}\tt}
+\def\bluett{\color{blue}\tt}
+\def\bottom{\perp}
+\font\manual=manfnt
+\def\dbend{{\manual\char127}}
+\def\eqq{{\buildrel?\over=}}
+%\def\B{\red{$\cal B$}}
+\def\C{\red{$\cal C$}}
+\def\J{\red{$\cal J$}}
+\def\I{{\cal I}}
+\def\Z{{\bf Z}}
+\def\Q{{\bf Q}}
+%\def\C{{\bf C}}
+\def\N{{\bf N}}
+\def\R{{\bf R}}
+\def\Oo{{\cal O}}
+\def\CL{\mathop{\rm CL}}
+\def\const{\mathop{\rm const}}
+\def\erf{\mathop{\rm erf}}
+\def\res{\mathop{\rm res}\nolimits}
+\def\Proj{\mathop{\rm Proj}}
+\def\IDA{{}_{\rm DA}\int}
+\def\DDA{D_{\rm DA}}
+\def\arctanDA{\arctan_{\rm DA}}
+\def\logDA{\log_{\rm DA}}
+\def\cDA{constant${}_{\rm DA}$}
+\def\fracDDA#1#2{\frac{{\rm d}#1}{{\rm d}_{\rm DA}#2}}
+\def\Ied{{}_{\epsilon\delta}\int}
+\def\Ded{D_{\epsilon\delta}}
+\def\arctaned{\arctan_{\epsilon\delta}}
+\def\loged{\log_{\epsilon\delta}}
+\def\fracDed#1#2{\frac{{\rm d}#1}{{\rm d}_{\epsilon\delta}#2}}
+%\documentclass[notes=hide]{beamer}   % Without note
+\documentclass[handout]{beamer}   % handout mode 
+%\usepackage[hyphen]{url}
+%\usepackage[final]{pdfpages}
+\newcommand{\Qxiblock}[2]{Q_{#1} x_{#1,1},\ldots,x_{#1,#2_{#1}}}
+%\usepackage{tikz}
+\usepackage{hyperref}
+
+%\mode<presentation>
+
+\usetheme{Warsaw}
+
+\setbeamertemplate{navigation symbols}{}
+
+\usepackage{verbatim}
+%\usepackage{enumitem}
+
+\usepackage{color}
+\bibliographystyle{alpha}
+\title{Proving an Execution of an Algorithm Correct?\\
+The case of Polynomial Factorisation}
+\author{James Davenport\\% \& Tim French\\
+\tt masjhd@bath.ac.uk\\
+With Edgar Costo, Alex Best, Mario Carneiro}
+%(Thanks to RJB for the improved title)}
+\institute{University of Bath\\Thanks to IPAM at UCLA for prompting this, and many colleagues, especially at Dagstuhl seminar 23401, for input\\Partially supported by EPSRC  grant EP/T015713}%(visiting Waterloo)}
+\date{5 October 2023}
+\expandafter\def\expandafter\insertshorttitle\expandafter{%
+  \insertshorttitle\hfill%
+  \insertframenumber\,/\,\inserttotalframenumber}
+\begin{document}
+\iffalse
+\cite{Hoffmannetal2023a} for primality.
+\fi
+\frame{
+\titlepage
+}
+\begin{frame}[fragile]
+\frametitle{General Situation}
+Do I believe the output from my (complicated, optimised, unverified) computer algebra system?
+\par\pause
+See JHD's paper at CICM 2023 \cite{Davenport2023b}, but note that the same question, in different settings, was asked by Mehlhorn \cite{Mehlhorn2011a}.
+\par\pause
+\cite{Davenport2023b} looked at three examples.
+\pause
+\begin{description}[<+->]
+\item[Polynomial Factorisation]$f=f_1f_2\cdots f_k$ \emph{and} the $f_i$ is irreducible.
+\item[Integration]The assertion ``unintegrable'' is correct.
+\item[Real Algebraic Geometry]The assertion that the semi-algebraic variety is empty (UNSAT) is correct.
+\end{description}
+\pause
+The last is the most important question, but factorisation is easy to explain and a good case study in its own right.
+\end{frame}
+\begin{frame}[fragile]
+\frametitle{Polynomial Factorisation}
+The base case is polynomials in $\Z[x]$. 
+\begin{problem}[Factorisation]\label{prob:fact}
+Given $f\in\Z[x]$, write $f=\prod f_i$ where the $f_i$ are \emph{irreducible} elements of $\Z[x]$.
+\end{problem}
+\pause Verifying that $f=\prod f_i$ is, at least relatively, easy. \pause The hard part is verifying that the $f_i$ are \emph{irreducible}. \pause JHD knows of no implementation of polynomial factorisation that produces any evidence, let alone a proof, of this.
+\iffalse
+\pause
+\begin{problem}[Factorisation in this style]\label{prob:fact-basic}
+Given $f\in\Z[x_1,\ldots,x_n]$, produce
+        \begin{description}
+                \item[either]a proper factor $g$ of $f$,
+\item[or]$\bottom$ indicating that no such $g$ exists.
+        \end{description}
+\end{problem}
+\fi
+\pause\par
+We may as well assume $f$ is square-free \pause(this would be a rather separate verification question).
+\end{frame}
+\begin{frame}[fragile]
+\frametitle{Algorithm}
+The basic algorithm goes back to \cite{Zassenhaus1969}: step M is a later addition \cite{Musser1975a}, and the  H' variants are also later.
+\begin{enumerate}
+\item Choose a prime $p$ (not dividing the leading coefficient of $f$) such that $f\pmod p$ is also square-free.
+\item\label{step:p} Factor $f$ modulo $p$ as $\prod f_i^{(1)} \pmod p$.
+\item[M]Take five $p$ and compare the factorisations.
+\item If $f$ can be shown to be irreducible from modulo $p$ factorisations, return $f$.
+\item Let $B$ be such that any factor of $f$ has coefficients less than $B$ in magnitude, and $n$ such that $p^n\ge 2B$.
+\item Use Hensel's Lemma to lift the factorisation to $f=\prod f_i^{(n)} \pmod {p^n}$
+\item[H]\label{step:H} Starting with singletons and working up, take subsets of the $f_i^{(n)}$, multiply them together and check whether, regarded as polynomials over $\Z$ with coefficients in $[-B,B]$, they divide $f$ --- if they do, declare that they are irreducible factors of $f$.
+\end{enumerate}
+\end{frame}
+\begin{frame}[fragile]
+\frametitle{Algorithm Notes}
+\begin{enumerate}[<+->]\item[H']\label{step:H'}Use some alternative technique, originally \cite{Lenstraetal1982}, but now e.g. \cite{Abbottetal2000a,Hartetal2011a} to find the true factor corresponding to $f_1^{(n)}$, remove $f_1^{(n)}$ and the other $f_i^{(n)}$ corresponding to this factor, and repeat.
+\item[\dbend]In practice, there are a lot of optimisations, which would greatly complicate a proof of correctness of an implementation of this algorithm.
+\end{enumerate}
+\pause
+\begin{quote}
+We found that, although the Hensel construction is basically neat and simple in theory,
+the fully optimised version we finally used was as nasty a piece of code to write and
+debug as any we have come across \cite{MooreNorman1981}.
+\end{quote}
+\pause
+Since if $f$ is irreducible modulo $p$, it is irreducible over the integers, the factors produced from singletons in step \ref{step:H} are easily proved to be irreducible.  Unfortunately, the chance that an irreducible polynomial of degree $n$ is irreducible modulo $p$ is $1/n$.
+\end{frame}
+\begin{frame}[fragile]
+\frametitle{Algorithm Notes}
+%\par\pause
+A factorisation algorithm could, even though no known implementation does, relatively easily produce the required information for a proof of irreducibility unless the recombination step is required. \pause
+\begin{enumerate}[<+->]
+\item[Note]that \emph{verifying} the Hensel lifting, the ``nasty piece'' from \cite{MooreNorman1981} is easy: the factors just have to have the right degrees from the factorisation of $f \pmod p$ and multiply to give $f\pmod{p^n}$.
+\item[\dbend]Building test cases for the various edge cases was extremely difficult.
+\end{enumerate}
+\pause
+Step [H] is relatively easy to verify: this combination divides and no smaller combination divides. \pause The variants in [H'] are interesting: I have not found an easy route. \par\pause
+If [H'] finds a factor that is a product of $k$ $p$-adic factors, then we can use [H] to verify this by checking that the $2^k-2$ subsets do not give factors.
+\par\pause
+But if [H'] says ``irreducible'', I know no easy proof.
+\end{frame}
+\begin{frame}[fragile]
+\frametitle{Progress at Dagstuhl}
+\pause
+\begin{enumerate}[<+->]
+\item
+We can extract from the implementation in FLINT \cite{Flint2023a} of the algorithm with [H], at essentially no cost, the key data that we believe a verifier would need to confirm the irreducibility.
+\item But this is not necessarily the most efficient verification.
+\item We \emph{think} that a more efficient verification would need negligibly more work.
+\item We haven't built a verification.
+\item The ``hard'' theorems are stated, but what about the ``easy'' ones, mappings such as ``regarded as polynomials over $\Z$ with coefficients in $[-B,B]$''?
+\item Needs more theorem prover input.
+\item[But]We have discovered improvements to FLINT, and at least one new research question in computer algebra.
+\item[+]FLINT also has [H'], but we haven't looked at this yet.
+\end{enumerate}
+\end{frame}
+\iffalse
+\begin{frame}[fragile]
+\frametitle{Further Reflections}
+\begin{enumerate}
+\item[M]Take five $p$ and compare the factorisations.
+\end{enumerate}
+\pause
+Not just ``take the best''. \pause Rather we look for incompatibilities, so if a degree 4 factors as 3,1 modulo one prime and 2,2 modulo another, it's actually irreducible, and so on.
+\par\pause
+\cite{Musser1975a} suggests taking five primes, though more recently \cite{LuczakPyber1997} show that, if the Galois group is $S_n$, seven is asymptotically right.
+\par\pause
+For any degree $d$, the probability that a random polynomial with coefficients $\le H$ has Galois group $S_n$ tends to 1 as $H$ tends to infinity. \pause \cite{DavenportSmith2000} looks at other Galois groups.
+\end{frame}
+\fi
+
+\begin{frame}[allowframebreaks]
+\frametitle{Bibliography}
+\bibliography{../../../../../jhd}
+\end{frame}
+
+\end{document}
+\begin{frame}[fragile]
+\frametitle{}
+\pause
+\begin{itemize}[<+->]
+\item 
+\end{itemize}
+\end{frame}
+\pause
+	\begin{description}
+		\item[]
+	\end{description}
+\begin{frame}[fragile]
+\frametitle{}
+\pause
+\begin{enumerate}[<+->]
+\item 
+\item 
+\item 
+\item 
+\item 
+\end{enumerate}
+\end{frame}
+\begin{frame}
+\begin{frame}

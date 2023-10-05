@@ -1,0 +1,52 @@
+\begin{thebibliography}{HvHN11}
+
+\bibitem[ASZ00]{Abbottetal2000a}
+J.A. Abbott, V.~Shoup, and P.~Zimmermann.
+\newblock {Factorization in $\Z[x]$: The Searching Phase}.
+\newblock In C.~Traverso, editor, {\em Proceedings ISSAC 2000}, pages 1--7,
+  2000.
+
+\bibitem[Dav23]{Davenport2023b}
+James~Harold Davenport.
+\newblock {Proving an Execution of an Algorithm Correct?}
+\newblock In Catherine Dubois and Manfred Kerber, editors, {\em Proceedings
+  CICM 2023}, volume 14101 of {\em Springer Lecture Notes in Computer Science},
+  pages 255--269, 2023.
+
+\bibitem[HvHN11]{Hartetal2011a}
+W.~Hart, M.~van Hoeij, and A.~Novocin.
+\newblock {Practical polynomial factoring in polynomial time}.
+\newblock In {\em Proceedings ISSAC 2011}, pages 163--170, 2011.
+
+\bibitem[LLL82]{Lenstraetal1982}
+A.K. Lenstra, H.W. {Lenstra Jun.}, and L.~Lov\'asz.
+\newblock {Factoring Polynomials with Rational Coefficients}.
+\newblock {\em Math. Ann.}, 261:515--534, 1982.
+
+\bibitem[Meh11]{Mehlhorn2011a}
+K.~Mehlhorn.
+\newblock {Certifying Algorithms}.
+\newblock \url{https://people.mpi-inf.mpg.de/~mehlhorn/ftp/CertifyingAlgs.pdf},
+  2011.
+
+\bibitem[MN81]{MooreNorman1981}
+P.M.A. Moore and A.C. Norman.
+\newblock {Implementing a Polynomial Factorization and GCD Package}.
+\newblock In {\em Proceedings SYMSAC 81}, pages 109--116, 1981.
+
+\bibitem[Mus75]{Musser1975a}
+D.R. Musser.
+\newblock {Multivariate Polynomial Factorization}.
+\newblock {\em J. ACM}, 22:291--308, 1975.
+
+\bibitem[tea23]{Flint2023a}
+The~{FLINT} team.
+\newblock {\em {FLINT}: {F}ast {L}ibrary for {N}umber {T}heory}, 2023.
+\newblock Version 2.9.0, \url{https://flintlib.org}.
+
+\bibitem[Zas69]{Zassenhaus1969}
+H.~Zassenhaus.
+\newblock {On Hensel Factorization I}.
+\newblock {\em J. Number Theory}, 1:291--311, 1969.
+
+\end{thebibliography}
