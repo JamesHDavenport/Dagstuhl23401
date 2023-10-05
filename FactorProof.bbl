@@ -21,6 +21,11 @@ E.R. Berlekamp.
 \newblock {Factoring Polynomials over Large Finite Fields}.
 \newblock {\em Math. Comp.}, 24:713--735, 1970.
 
+\bibitem[Coh93]{Cohen1993a}
+H.~Cohen.
+\newblock {A Course in Computational Algebraic Number Theory}.
+\newblock {\em Graduate Texts in Mathematic 138}, 1993.
+
 \bibitem[Col79]{Collins1979}
 G.E. Collins.
 \newblock {Factoring univariate integral polynomials in polynomial average

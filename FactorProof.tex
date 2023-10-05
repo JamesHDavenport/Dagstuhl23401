@@ -208,7 +208,10 @@ dependence on $Q$ on the right, but we can use a weaker form:
 \sum_{i=0}^q \left\vert b_i \right\vert \le
 2^p \sqrt{\sum_{i=0}^p{a_i^2}} .
 \end{equation}
-In practice, we use \cite{Abbott2013b} as our source for the bounds on factors.
+In practice, we use \cite{Abbott2013b} as our source for the bounds on factors. Note, however, that these theorems rely on real and complex analysis, even though the statements are about $\Z[x]$. The precise formulation in Flint is slightly different (taken from \cite[Theorem 3.5.1]{Cohen1993a}):
+\begin{equation}\def\abs#1{|#1|}\def\binom#1#2{\left(\begin{array}{c}#1\\#2\end{array}\right)}
+    \abs{b_j} \leq \binom{n-1}{j} \sqrt{\sum_{i=0}^p{a_i^2}}+ \binom{n-1}{j-1} \abs{a_m}
+    \end{equation}
 \par
 There are various algorithms for factoring polynomials modulo $p$, but all we need to do is verify that the factors given the verifier by the algebra system multiply correctly and are irreducible. The following theorem is probably the easiest way of doing that.
 \begin{theorem}[After \cite{CantorZassenhaus1981}]
