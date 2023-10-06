@@ -182,7 +182,18 @@ $p$&raw&using 3 primes&using 5 primes\\
 We have seen that using 5 primes rather than Flint's choice of 3 would mean that several more recombinations could be ruled out.  But in fact, if we used 5 primes, we would also decide that $p=17$, with five factors, was a better choice than $p=11$, with six factors. As we can see in Table \ref{tab:shortcut},we would look at five combinations in all, versus ten with $p=11$ and five primes or nineteen with $p=11$ and three primes.
 \par
 Moving to seven primes doesn't help, as can be seen in Table \ref{tab:CZ}. We do get some progress at $p=41$ (11 primes),when the factorisation has degrees 2,2,4,23,31, ruling out possible degrees 12 and 21, leaving 4,23,27,31\dots{} as the options. $p=43$ then has factorisation degrees 1,3,3,27,28, ruling out 23. The next progress is at $p=59$, with factorisation shapes 1,5,8,17,31, ruling out both 4 and 27, thus forcing a 31/31 split.
-
+\section{So what is the certificate?}
+As far as we can tell, these are the components needed.
+\begin{enumerate}
+\item The 5(?) Musser primes (or the useful subset)
+\item The factorisations modulo these
+\item[*]Need to verify that these are irreducible.
+\item The chosen $p$ and $n$
+\item The set $S$ of factors modulo $p^n$
+\item[*]Need to check they match the mod $p$ ones, and multiply. We have already proved irreducibility of the mod $p$ versions
+\item The partition $S=\bigcup S_i$ that corresponds to the true factorisation.
+\end{enumerate}
+Thanks to Tobias Nipkow for asking this explicitly.
 \section{Towards a Formal Proof}
 We will use Lean as our theorem prover, though the choice is probably not fundamental.
 \par
