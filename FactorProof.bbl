@@ -1,4 +1,4 @@
-\begin{thebibliography}{ASZ00}
+\begin{thebibliography}{MMNS11}
 
 \bibitem[Abb13]{Abbott2013b}
 J.A. Abbott.
@@ -37,6 +37,13 @@ D.G. Cantor and H.~Zassenhaus.
 \newblock {A New Algorithm for Factoring Polynomials over Finite Fields}.
 \newblock {\em Math. Comp.}, 36:587--592, 1981.
 
+\bibitem[Dav23]{Davenport2023b}
+James~Harold Davenport.
+\newblock {Proving an Execution of an Algorithm Correct?}
+\newblock In Catherine Dubois and Manfred Kerber, editors, {\em Proceedings
+  CICM 2023}, volume 14101 of {\em Springer Lecture Notes in Computer Science},
+  pages 255--269, 2023.
+
 \bibitem[Lan05]{Landau1905}
 E.~Landau.
 \newblock {Sur Quelques Th\'eor\`emes de M. Petrovic Relatif aux Z\'eros des
@@ -54,6 +61,12 @@ T.~\L{}uczak and L.~Pyber.
 \newblock In {\em Proceedings Combinatorics geometry and probability}, pages
   463--470, 1997.
 
+\bibitem[Meh11]{Mehlhorn2011a}
+K.~Mehlhorn.
+\newblock {Certifying Algorithms}.
+\newblock \url{https://people.mpi-inf.mpg.de/~mehlhorn/ftp/CertifyingAlgs.pdf},
+  2011.
+
 \bibitem[Mig74]{Mignotte1974}
 M.~Mignotte.
 \newblock {An Inequality about Factors of Polynomials}.
@@ -64,6 +77,11 @@ M.~Mignotte.
 \newblock {Some Useful Bounds}.
 \newblock {\em Symbolic and Algebraic Computation (Computing Supplementum 4)
   Springer-Verlag}, pages 259--263, 1982.
+
+\bibitem[MMNS11]{McConnelletal2011a}
+R.M. McConnell, K.~Mehlhorn, S.~N\"aher, and P.~Schweitzer.
+\newblock {Certifying algorithms}.
+\newblock {\em Computer Science Review}, 5:119--161, 2011.
 
 \bibitem[MN81]{MooreNorman1981}
 P.M.A. Moore and A.C. Norman.

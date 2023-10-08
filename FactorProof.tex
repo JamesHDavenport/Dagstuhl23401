@@ -62,6 +62,15 @@
 Many algorithms in computer algebra and beyond produce answers. For some of these, we have formal proofs of the correctness of the algorithm, and for others it is easy to verify that the answer is correct. Other algorithms produce either an answer or a proof that no such answer exists. It may still be easy to verify that the answer is correct, but what about the ``no such answer'' case. A slight variant on ``no such answer'' is given by polynomial factoring, where we say ``$f$ factors as $g\cdot h$'' but imply ``and no more'', i.e. that $g$ and $h$ don't factor. How might an algebra system help produce such a proof?
 \end{abstract}
 \section{Introduction}
+\cite{Davenport2023b} asked whether various computer algebra algorithms could produce evidence that a theorem-prover could use to prove correctness of that specific execution of the algorithm. It turns out that the question has been asked, in the context of graph algorithms by Kurt Mehlhorn \cite{Mehlhorn2011a} (in 1999 according to Tobias Nikpow), and there's some useful theory in \cite{McConnelletal2011a}.
+\par
+\cite{Davenport2023b} looked at three examples.
+\begin{description}
+\item[Polynomial Factorisation]$f=f_1f_2\cdots f_k$ \emph{and} the $f_i$ is irreducible.
+\item[Integration]The assertion ``unintegrable'' is correct.
+\item[Real Algebraic Geometry]The assertion that the semi-algebraic variety is empty (UNSAT) is correct.
+\end{description}
+The last is the most important question, but factorisation is easy to explain and a good case study in its own right.
 \section{Polynomial Factorisation: the theory}\label{sec:Zass}
 For simplicity we will consider factorisation over the integers of polynomials with integer coefficients. Algebraic number fields add complications, but not, we believe, fundamental ones. The problem of factorisation is normally stated as follows.
 \begin{problem}[Factorisation]\label{prob:fact}
@@ -192,6 +201,7 @@ As far as we can tell, these are the components needed.
 \item The set $S$ of factors modulo $p^n$
 \item[*]Need to check they match the mod $p$ ones, and multiply. We have already proved irreducibility of the mod $p$ versions
 \item The partition $S=\bigcup S_i$ that corresponds to the true factorisation.
+\item[+]Note that we need merely check that subsets of each $S_i$ do not give rise to factors, rather than subsets of the whole of $S$.
 \end{enumerate}
 Thanks to Tobias Nipkow for asking this explicitly.
 \section{Towards a Formal Proof}
