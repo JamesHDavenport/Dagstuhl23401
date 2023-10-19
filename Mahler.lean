@@ -70,9 +70,24 @@ noncomputable
 def L2normSq (f : R[X]) : ℝ :=
   ∑ a in f.support, ‖algebraMap R ℂ (f.coeff a)‖^2
 
+open Classical
+lemma L2normSq_finsum (f : R[X]) :
+    L2normSq f = ∑ᶠ (a : ℕ), ‖algebraMap R ℂ (f.coeff a)‖^2 := by
+  have := finsum_eq_finset_sum_of_support_subset (fun a => ‖algebraMap R ℂ (f.coeff a)‖^2) (s := Polynomial.support f) ?_
+  rw [this]
+  rw [L2normSq]
+  intro a ha
+  simp
+  simp at *
+  contrapose! ha
+  simp [ha]
+
+
+
 @[simp]
 lemma L2normSq_zero : L2normSq (0 : R[X]) = 0 := by
   simp [L2normSq]
+
 
 universe u v
 theorem support_smul_eq {R : Type u} {S : Type v} [Semiring R] [Semiring S] [SMulWithZero S R] (r : S) (h: r ≠ 0) [NoZeroSMulDivisors S R] (p : R[X]) :
@@ -116,6 +131,32 @@ theorem support_monomial_mul {R : Type u} [Semiring R] (p : R[X]) (n : ℕ) :
     congr
 
 @[simp]
+lemma coeff_smul_pow_add_mul {R : Type u} [Semiring R] (a b : R) (p : R[X]) (k n : ℕ) (h : n ≤ k):
+    Polynomial.coeff ((a • X^n + C b) * p) k = a * p.coeff (k - n) + b * p.coeff k := by
+  simp [add_mul, coeff_add, coeff_C_mul, smul_mul_assoc, coeff_smul, smul_eq_mul, ge_iff_le, coeff_X_pow_mul', h]
+
+@[simp]
+lemma coeff_smul_pow_add_mul' {R : Type u} [Semiring R] (b : R) (p : R[X]) (k n : ℕ) (h : n ≤ k):
+    Polynomial.coeff ((X^n + C b) * p) k = p.coeff (k - n) + b * p.coeff k := by
+  simpa using coeff_smul_pow_add_mul 1 b p k n h
+
+@[simp]
+lemma coeff_smul_pow_neg_mul {R : Type u} [Ring R] (a b : R) (p : R[X]) (k n : ℕ) (h : n ≤ k):
+    Polynomial.coeff ((a • X^n - C b) * p) k = a * p.coeff (k - n) - b * p.coeff k := by
+  simpa[sub_eq_add_neg] using coeff_smul_pow_add_mul a (-b) p k n h
+
+@[simp]
+lemma coeff_smul_pow_neg_mul' {R : Type u} [Ring R] (b : R) (p : R[X]) (k n : ℕ) (h : n ≤ k):
+    Polynomial.coeff ((X^n - C b) * p) k = p.coeff (k - n) - b * p.coeff k := by
+  simpa using coeff_smul_pow_neg_mul 1 b p k n h
+
+@[simp]
+lemma coeff_smul_pow_neg_mul'' {R : Type u} [Ring R] (b : R) (p : R[X]) (k : ℕ) (h : 1 ≤ k):
+    Polynomial.coeff ((X - C b) * p) k = p.coeff (k - 1) - b * p.coeff k := by
+  simpa using coeff_smul_pow_neg_mul 1 b p k 1 h
+
+
+@[simp]
 lemma L2normSq_smul_eq (g : ℂ[X]) (α: ℂ) : L2normSq ( α • g ) = ‖α‖^2  *  L2normSq g := by
   by_cases zero: α = 0
   . simp[zero]
@@ -129,14 +170,36 @@ lemma L2normSq_smul_eq (g : ℂ[X]) (α: ℂ) : L2normSq ( α • g ) = ‖α‖
 lemma L2normSq_X_mul_eq (g : R[X]) :  L2normSq ( X * g ) =  L2normSq ( g ) := by
   simp [L2normSq]
 
+lemma foobar_1  (g : ℂ[X]) (α β: ℂ) :
+    L2normSq ( ( α • X - Polynomial.C β ) * g ) =  ∑ᶠ (a : ℕ), if a = 0 then ‖β * g.coeff 0‖^2 else ‖α * g.coeff (a - 1) - β * g.coeff a‖^2  := by
+  -- g = 1 LHS 1^2 + |alpha|^2
+  -- RHS |alpha^2|
+  simp [L2normSq_finsum]
+  sorry
+  /-
+  rw [Finsum.sum_eq_sum_diff_singleton_add (i := 0)]
+  simp [coeff_smul_pow_neg_mul'']
+  --simp [L2normSq, L2normSq_smul_eq]
+  --rw [coeff_smul_pow_add_mul]
+  -/
 
+open Complex
 lemma foobar (g : ℂ[X]) (α: ℂ) :
-    L2normSq ( (X - Polynomial.C α ) *g ) = L2normSq (( (Polynomial.C (conj α) )*X - ↑ 1) * g) := by
-  simp [L2normSq]
-  rw?
+    L2normSq ( (X - Polynomial.C α ) *g ) = L2normSq (( (conj α) • X - ↑ 1) * g) := by
+  have := foobar_1 (β := α) (α := 1)
+  simp at this
+  rw[this]
+  have := foobar_1 (β := 1) (α := conj α)
+  simp at this
+  rw[this]
+  simp_rw [Complex.sq_abs]
+  simp_rw [Complex.normSq_sub]
 
 
 
+
+
+#exit
 
 -- lemma mahler_l2 (f : R[X]) :
 --     mahlerMeasure f ≤ Real.sqrt (L2normSq f):= by
