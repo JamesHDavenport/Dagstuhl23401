@@ -51,10 +51,10 @@
 \usepackage{color}
 \bibliographystyle{alpha}
 \title{Proving an Execution of an Algorithm Correct?}
-\author{Edgar Costa \and James Harold Davenport\\% \& Tim French\\
+\author{ Alex J. Best\and Mario Carneiro \and Edgar Costa \and James Harold Davenport\\% \& Tim French\\
 \tt edgarc@mit.edu  masjhd@bath.ac.uk}
 %(Thanks to RJB for the improved title)}
-\institute{M.I.T. \and University of Bath, Bath BA2 7AY, UK}%(visiting Waterloo)}
+\institute{Imperial College \and ?? \and M.I.T. \and University of Bath, Bath BA2 7AY, UK}%(visiting Waterloo)}
 \date{October 2023}
 \begin{document}
 \maketitle
@@ -131,12 +131,12 @@ Case&description&\multispan3{\hfil Times for\hfil}\\
 \item[3.]A typical example would be where, modulo some $p$, $f$ factors into three irreducible factors, of degrees 3,5,8, and the other primes are consistent with this. Then we lift as above, and verify these are factors. The Musser test on the original polynomial does not directly prove that the 8 is irreducible (because a 3,5 split is feasible), but repeating the Musser test on that factor will actually prove it irreducible. With this change, the timings are the same as case 2.
 \item[4.]Swinnerton-Dyer polynomials are the classic case. If we use classic recombination \cite{Zassenhaus1969} then the verification is essentially equivalent to the initial computation. More advanced methods \cite{Lenstraetal1982,Abbottetal2000a} would require proving their results in the prover, but this would only need to be done once. This might be hard, but is currently unknown.
 \end{itemize}
-There are many other possibilities, which depend essentially on the Galois groups of the factors of the polynomial. To the best of the author's knowledge, no work has been done on extending the theory of factoring (\cite[etc.]{DavenportSmith2000,LuczakPyber1997}) to retrospective verification.
+There are many other possibilities, which depend essentially on the Galois groups of the factors of the polynomial. To the best of the fourth author's knowledge, no work has been done on extending the theory of factoring (\cite[etc.]{DavenportSmith2000,LuczakPyber1997}) to retrospective verification.
 \fi
 \subsection{Multivariate Polynomials}
 The algorithm is basically similar, replacing primes by evaluations $x_i\rightarrow v_i$.  The difference is that, if $f(x_1,\ldots,x_n)$ is irreducible, then with probability 1, $f(x_1,v_2,\ldots,v_n)\in\Z[x_1]$ is also irreducible. Hence this is probably not significantly easier than the univariate case in terms of proving, unlike implementation \cite{MooreNorman1981}.
 \section{The practice: FLINT}
-We chose FLINT \cite{Flint2023a} as an open-source implementation with which the first author was familiar. The basic implementation of polynomial factorisation largely follows the scheme of \S\ref{sec:Zass}, but there are some differences.
+We chose FLINT \cite{Flint2023a} as an open-source implementation with which the third author was familiar. The basic implementation of polynomial factorisation largely follows the scheme of \S\ref{sec:Zass}, but there are some differences.
 \begin{enumerate}
 \item Step M uses three primes.
 \item Step H checks the degree of the product to be verified against the list of possible degrees from M, and can therefore rule out a potential product.
@@ -148,7 +148,7 @@ This polynomial is given in the Zassenhaus tests of FLINT.
 x^{62}+x^{61}+x^{60}-4 x^{59}-7 x^{58}-2 x^{57}-6 x^{56}-3 x^{55}-7 x^{54}+18 x^{53}+7 x^{52}\\+25 x^{51}-11 x^{50}+95 x^{49}+36 x^{48}+21 x^{47}+16 x^{46}+69 x^{45}+56 x^{44}+35 x^{43}\\+36 x^{42}+32 x^{41}+33 x^{40}+26 x^{39}-26 x^{38}-15 x^{37}-14 x^{36}-53 x^{35}-96 x^{34}\\+67 x^{33}+72 x^{32}-67 x^{31}+40 x^{30}-79 x^{29}-116 x^{28}-452 x^{27}-312 x^{26}\\-260 x^{25}-29 x^{24}-1393 x^{23}+327 x^{22}+69 x^{21}-28 x^{20}-241 x^{19}+230 x^{18}\\-54 x^{17}-309 x^{16}-125 x^{15}-74 x^{14}-450 x^{13}-69 x^{12}-3 x^{11}+66 x^{10}\\-27 x^{9}+73 x^{8}+68 x^{7}+50 x^{6}-63 x^{5}-1290 x^{4}+372 x^{3}+31 x^{2}-16 x +2
 \end{array}
 \end{equation}
-\cite{Konovalev2023a} quotes a computation by Max Horn in MAGMA that the Galois group )over $\Z$ is $S_{31}\times S_{31}$.
+\cite{Konovalov2023a} quotes a computation by Max Horn in MAGMA that the Galois group )over $\Z$ is $S_{31}\times S_{31}$.
 \begin{table}
 \caption{Factorisation shapes\label{tab:CZ}}
 \begin{tabular}{rll}
@@ -238,7 +238,7 @@ There are various algorithms for factoring polynomials modulo $p$, but all we ne
 \begin{theorem}[After \cite{CantorZassenhaus1981}]
 A square-free polynomial $f$ of degree $d$ modulo $p$ is irreducible if $\gcd(f,x^{p^i}-x)\equiv 1 \pmod p$  for $1\le i\le d/2$.
 \end{theorem}
-\section*{Acknowledgements}The second author is supported by EPSRC grant EP/T015713.
+\section*{Acknowledgements}The fourth author is supported by EPSRC grant EP/T015713.
 \bibliography{../../../../../jhd}
 
 \end{document}
