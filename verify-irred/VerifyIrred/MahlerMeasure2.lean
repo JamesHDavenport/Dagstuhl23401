@@ -219,23 +219,62 @@ lemma finsum_succ (f : ℕ → R) (hf : Set.Finite f.support ) (hg : f 0 = 0) :
   simp only [Set.inter_subset_right]
   apply Set.Finite.inter_of_right hf
 
+open Classical
+lemma finsum_shift (g : R[X]) (f : R -> R) (h: f 0 = 0):
+  ∑ᶠ (i : ℕ), (if i = 0 then 0 else f (g.coeff (i - 1))) = ∑ᶠ (i : ℕ), f (g.coeff i) := by
+  rw [finsum_succ]
+  simp only [add_eq_zero, and_false, ite_false]
+  simp_rw [← Nat.succ_eq_add_one, ← Nat.pred_eq_sub_one, Nat.pred_succ]
+  rw [← h]
+  have h1: (fun i => if i = 0 then f 0 else f (coeff g (i - 1))) = fun i => f (if i = 0 then 0 else coeff g (i - 1)) := by
+    congr
+    ext i
+    rw [← @apply_ite]
+  rw [h1]
+  have h2: Function.support (fun i => if i = 0 then 0 else coeff g (i - 1)) ⊆ (g.coeff ∘ Nat.pred).support := by
+    intro i
+    -- rw [Function.support]
+    rw [@Function.mem_support, @Function.mem_support]
+    simp only [ge_iff_le, ne_eq, ite_eq_left_iff, not_forall, exists_prop, Function.comp_apply, and_imp]
+    tauto
+  have h3: Function.support ( fun i => f (if i = 0 then 0 else coeff g (i - 1) ) ) ⊆ Function.support (fun i => if i = 0 then 0 else coeff g (i - 1))  := by
+    rw [← h1, h]
+    intro i
+    rw [@Function.mem_support, @Function.mem_support]
+    contrapose
+    simp only [ge_iff_le, ne_eq, ite_eq_left_iff, not_forall, exists_prop, not_and, not_not]
+    cases i
+    · simp
+    . simp only [Nat.succ_ne_zero, not_false_eq_true, ge_iff_le, Nat.succ_sub_succ_eq_sub, nonpos_iff_eq_zero,
+      tsub_zero, forall_true_left]
+      aesop
+    done
+  have h4: Function.support ( fun i => f (if i = 0 then 0 else coeff g (i - 1) ) )  ⊆ (g.coeff ∘ Nat.pred).support := by
+    tauto
+  
+  
 
-   
 
 
 
 
 
-  -- rw [← Finset.insert_eq]
-  -- rw [← finsum_mem_insert_zero]
 
-  -- rw [finsum_eq_finset_sum_of_support_subset, finsum_eq_finset_sum_of_support_subset]
-  -- rw [finsum_eq_of_bijective]
-  -- rw [Finset.sum_eq_add_sum_diff_singleton 0]
+
 
 #exit
-lemma finsum_shift (g : R[X]) (f : R -> R) :
-  ∑ᶠ (i : ℕ), (if i = 0 then 0 else f (g.coeff i - 1)) = ∑ᶠ (i : ℕ), f (g.coeff i) := by
+
+
+  
+    
+
+    
+
+  
+
+  -- rw [ite]
+  
+
 
 
 
