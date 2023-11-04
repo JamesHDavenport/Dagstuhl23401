@@ -1,0 +1,378 @@
+\documentclass[11pt, aspectratio=169]{beamer}
+\usepackage{fontspec}
+
+%\documentclass[11pt, handout, notes]{beamer}
+\usepackage{pdfcomment}
+\newcommand{\pdfnote}[1]{\marginnote{\pdfcomment[icon=note]{#1}}}
+% disable comments
+\renewcommand{\pdfnote}[1]{}
+\usetheme{metropolis}
+\metroset{block=fill}
+\metroset{numbering=none}
+\metroset{numbering=fraction}
+%\metroset{progressbar=frametitle}
+
+
+\usepackage{emoji}
+\setemojifont{Apple Color Emoji}
+
+\usepackage{tikz}
+\usetikzlibrary{cd}
+
+\tikzset{
+    labl/.style={anchor=south, rotate=90, inner sep=.5mm}
+}
+
+
+%\makeatletter
+%\setlength{\metropolis@titleseparator@linewidth}{1pt}
+%\setlength{\metropolis@progressonsectionpage@linewidth}{1pt}
+%\setlength{\metropolis@progressinheadfoot@linewidth}{1pt}
+%\makeatother
+
+\usepackage{numprint}
+\usepackage{amsmath}
+\usepackage{mathtools}
+\usepackage{booktabs}
+\usepackage{soul}
+\usepackage[normalem]{ulem}
+\usepackage{colonequals}
+\usepackage{stmaryrd} % \mapsfrom
+
+\usepackage{graphicx}
+\usepackage{caption}
+\usepackage{xcolor}
+\definecolor{darkpurple}{rgb}{.5,.0,.5}
+\definecolor{darkbrown}{rgb}{.6,.4,.2}
+\usepackage{color}
+\definecolor{mylinkcolor}{rgb}{0.5,0.0,0.0}
+\definecolor{myurlcolor}{rgb}{0.92,0.31,0.11}
+\hypersetup{pdftitle={\@title}, pdfauthor={\@author}, colorlinks, urlcolor=myurlcolor, citecolor=myurlcolor, linkcolor=mylinkcolor}
+\usepackage[cmtip,all]{xy}
+\usepackage{multirow}
+\usepackage{wrapfig}
+\usepackage[none]{hyphenat}
+
+
+\DeclareMathOperator{\alg}{{al}}
+\DeclareMathOperator{\Jac}{{Jac}}
+
+\DeclarePairedDelimiter{\paren}{(}{)} % allow \paren[\big]{...}
+\DeclarePairedDelimiter\abs{\lvert}{\rvert}
+
+% Rings and spaces
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\Qq}{{\Q_q}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Nz}{\mathbb{N}_0}
+\newcommand{\Zq}{{\Z_q}}
+\newcommand{\F}{\mathbb{F}}
+\newcommand{\Fq}{{\F_q}}
+\newcommand{\Fp}{{\F_p}}
+\newcommand{\Fpbar}{ {\Fp} ^{\alg}}
+\newcommand{\PP}{\mathbb{P}}
+\newcommand{\Xp}{X_p}
+\newcommand{\Xbar}{X^{\alg}}
+\newcommand{\Xpbar}{{\Xp}^{\alg}}
+\newcommand{\Ep}{E_p}
+\newcommand{\Ap}{A_p}
+\newcommand{\Ebar}{E^{\alg}}
+\newcommand{\Epbar}{\Ep^{\alg}}
+\newcommand{\Apbar}{\Ap^{\alg}}
+\newcommand{\Abar}{A^{\alg}}
+
+
+% operators
+\newcommand{\sfloor}[1]{\lfloor {#1} \rfloor}
+\newcommand{\sceil}[1]{\lceil {#1} \rceil}
+\newcommand{\pxi}[2]{\frac{\partial {#1}}{\partial x_{#2}}}
+\DeclareMathOperator{\frob}{Frob}
+\DeclareMathOperator{\tr}{tr}
+\DeclareMathOperator{\NS}{NS}
+\DeclareMathOperator{\rank}{rk}
+\DeclareMathOperator{\Pic}{Pic}
+\DeclareMathOperator{\norm}{Nm}
+\DeclareMathOperator{\prob}{Prob}
+\DeclareMathOperator{\End}{End}
+\DeclareMathOperator{\Hom}{Hom}
+\DeclareMathOperator{\Aut}{Aut}
+\DeclareMathOperator{\Gal}{Gal}
+\DeclareMathOperator{\Br}{Br}
+\DeclareMathOperator{\disc}{disc}
+\DeclareMathOperator{\Spec}{Spec}
+\DeclareMathOperator{\Km}{Kummer}
+
+% groups
+\newcommand{\AST}{\operatorname{AST}}
+\newcommand{\GL}{\mathrm{GL}}
+\newcommand{\GSp}{\mathrm{GSp}}
+\newcommand{\Hg}{\mathrm{Hg}}
+\newcommand{\Lef}{\operatorname{L}}
+\newcommand{\MT}{\mathrm{MT}}
+\newcommand{\M}{\mathrm{M}}
+\newcommand{\PGL}{\mathrm{PGL}}
+\newcommand{\SL}{\mathrm{SL}}
+\newcommand{\SO}{\mathrm{SO}}
+\newcommand{\GO}{\mathrm{GO}}
+\newcommand{\Sp}{\mathrm{Sp}}
+\newcommand{\SU}{\mathrm{SU}}
+\newcommand{\U}{\mathrm{U}}
+\newcommand{\USp}{\mathrm{USp}}
+\newcommand{\ST}{\mathrm{ST}}
+\newcommand{\TL}{\operatorname{TL}}
+\newcommand{\Or}{\mathrm{O}}
+
+\newcommand{\magic}{\emoji{magic-wand} \emoji{top-hat} }
+\newcommand{\doublemagic}{\emoji{magic-wand} \emoji{zap} \emoji{top-hat}  \emoji{collision}}
+
+
+\title{A Formalizer, a Mathematician, and a Computer Algebra System Walk into a Bar: Bridging Formal and Computational Mathematics}
+
+\date{November 4, 2023, Simons Collaboration Meeting\\
+
+Slides available at \url{edgarcosta.org}\\
+ Joint work with Alex J. Best, Mario Carneiro, and James Davenport.}
+\author{Edgar Costa (MIT)}
+
+
+
+\begin{document}
+
+
+\begin{frame}
+  \titlepage
+\end{frame}
+
+\begin{frame}[fragile]{What is true?}
+    \begin{block}{Question}
+        Do I believe the output from a computer algebra system?
+    \end{block}
+
+\pause
+    \begin{theorem}
+        The number $3 \cdot 2^{189} + 1$ is a prime number.
+    \end{theorem}
+    \begin{block}{Proof \magic}
+        \vspace{-0.5em}
+    \begin{semiverbatim}
+sage: (3 * 2^189 + 1).is_prime(proof=True)
+True
+magma > IsPrime(3 * 2^189 + 1 : Proof:=true);
+true
+gp ? isprime(3 * 2^189 + 1)
+%1 = 1
+\end{semiverbatim}
+\end{block}
+\end{frame}
+
+\begin{frame}[fragile]{What is true?}
+    \begin{theorem}
+        The number $3 \cdot 2^{189} + 1$ is a prime number.
+    \end{theorem}
+    \begin{block}{Proof \doublemagic }
+        Take $n \colonequals 3 \cdot 2^{189} + 1$.
+        It is sufficient to exhibit $a$ such that
+        \vspace{-0.5em}
+        $$
+        1 \notin \{a^{(n-1)/2} \bmod{n},  a^{(n-1)/3} \bmod{n} \}.
+        $$
+        \vspace{-3em}
+\begin{semiverbatim}
+sage: n = 3 * 2^189 + 1
+....: a = Zmod(n)(10)
+....: 1 in [a^((n-1)/2), a^((n-1)/3)]
+True
+\end{semiverbatim}
+\vspace{-1em}
+\end{block}
+Since $n$ is a proth number, it is enough exhibit $a$ such that $a^{(n-1)/2} \equiv -1 \bmod n$.
+
+There several other possible prime certificates.
+
+\end{frame}
+
+\begin{frame}[fragile]{What is true?}
+    \begin{block}{Theorem}
+        The class group of $K \colonequals \Q(\sqrt{5}, \sqrt{-231}) = \href{https://www.lmfdb.org/NumberField/4.0.1334025.9}{\texttt{4.0.1334025.9}}$ is $C_{2}\times C_{2}\times C_{12}$.
+    \end{block}
+    \vspace{-0.2em}
+    \begin{block}{Proof \magic}
+        \vspace{-1em}
+\begin{semiverbatim}
+sage: K.class_group().invariants()
+(12, 2, 2)
+magma> Invariants(ClassGroup(K));
+[ 2, 2, 12 ]
+julia> class_group(K)[1]
+GrpAb: (Z/2)^2 x Z/12
+\end{semiverbatim}
+        \vspace{-1em}
+    \end{block}
+    \vspace{-0.2em}
+\begin{block}{Proof \doublemagic}
+    \texttt{magma> Degree(HilbertClassField(K));}
+    \\
+    \texttt{48}\\
+    \emoji{skull-and-crossbones} \texttt{segmentation fault (core dumped)}
+    \end{block}
+\end{frame}
+
+\begin{frame}{What is true?}
+\vspace{-0.9em}
+    \begin{small}
+    \begin{align*}
+        C_1 &\colon
+        y^2 + (x + 1)y = x^5 + 23x^4 - 48x^3 + 85x^2 - 69x + 45
+        \\
+        C_2 &\colon
+        y^2 + x y = -x^5 + 2573 x^4 + 92187 x^3 + 2161654285 x^2 + 406259311249 x + 93951289752862
+    \end{align*}
+\end{small}
+\vspace{-1em}
+    \begin{block}{Theorem}
+        There is an isogeny of degree $31^2$ between $\Jac(C_1)$ and $\Jac(C_2)$.
+    \end{block}
+    \begin{block}{Proof \magic \quad 3h}
+        Compute the isogeny class via Bommel--Chidambaram--Costa--Kieffer:\\
+        \texttt{sage -python genus2isogenies.py ...}
+    \end{block}
+    \begin{block}{Proof \doublemagic \quad 6.5h}
+    Produce a divisor in $C_1 \times C_2$ via Costa--Mascot--Sijsling--Voight:\\
+    \texttt{magma> Correspondence(C1, C2, heuristic\_isogeny);}
+    \\
+    \texttt{...}
+\end{block}
+\end{frame}
+
+
+\begin{frame}{Spectrum of options}
+    \begin{itemize}
+            \item \emoji{scroll} Generate certificates of correctness a posteriori
+        \begin{itemize}
+            \item Primality proving
+            \item Homomorphisms between Jacobians
+            \item LLL lattice basis reduction
+        \end{itemize}
+        \pause
+        \item \emoji{gear} Formalize the algorithm
+            \begin{itemize}
+                \item Smith and Hermite normal form
+                \item Factorisation over $\Z[x]$
+                \item LLL lattice basis reduction algorithm
+                \item Tate's algorithm
+            \end{itemize}
+        \pause
+        \item \emoji{magic-wand} By pure thought generate an alternative proof
+            \pause
+            \begin{itemize}
+                \item a magician never reveals their secrets
+            \end{itemize}
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{\emoji{gear} Formalization of factorization over $\Z[x]$}
+\vspace{-0.5em}
+\begin{center}
+\includegraphics[width=0.8\textwidth]{images/Zassenhaus_graph.pdf}\\
+\end{center}
+\vspace{-0.5em}
+by Divasón--Joosten--Thiemann--Yamada
+\end{frame}
+
+\begin{frame}{\emoji{gear} LLL lattice basis reduction algorithm}
+\vspace{-0.5em}
+    \begin{center}
+\includegraphics[height=0.85\textheight]{images/LLL_graph.pdf}\\
+\end{center}
+by Thiemann--Bottesch--Divasón--Haslbeck--Joosten--Yamada
+\end{frame}
+
+\begin{frame}{\emoji{gear} Tate's algorithm (work in progress by Best--Dahmen--Huriot-Tattegrain)}
+    \begin{itemize}
+        \item Some of the output is out of reach to be formalized:
+            \begin{itemize}
+                \item Kodaira symbol
+                \item Conductor exponent
+                \item Tamagawa number
+                \item ...
+            \end{itemize}
+        \item They verified that the algorithm terminates under some mild assumptions
+        \item Works in characteristic 2 and 3
+        \item Verified output for some explicit families, e.g., $y^2 = x^3 + p$ gives $I_1$ for $p >5$
+        \item Verified the local data on LMFDB ($\sim\!13$ million curves) in $\sim\!10$ minutes
+        \item Future: show that the output is invariant under change of coordinates
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{The sweet spot}
+    \begin{itemize}
+        \item \emoji{honey-pot} Generate bread crumbs for a certificate along the way
+            \begin{itemize}
+                \item Primality testing via elliptic curves
+                \item Factorisation over $\Z[x]$
+                \item Class group computation?
+            \end{itemize}
+        \item \emoji{scroll} Generate certificates of correctness a posteriori
+            \begin{itemize}
+                \item Primality proving
+                \item Homomorphisms between Jacobians
+                \item LLL lattice basis reduction algorithm
+            \end{itemize}
+        \item \emoji{gear} Formalize the algorithm
+            \begin{itemize}
+                \item Smith and Hermite normal form
+                \item Factorisation over $\Z[x]$
+                \item LLL lattice basis reduction algorithm
+                \item Tate's algorithm
+            \end{itemize}
+        \item \emoji{magic-wand} By pure thought generate an alternative proof
+            \begin{itemize}
+                \item a magician never reveals their secrets
+            \end{itemize}
+    \end{itemize}
+\end{frame}
+\begin{frame}[fragile]{\emoji{honey-pot} Factorisation over $\Z[x]$ (Best--Carneiro--Costa--Davenport)}
+    \only<-2>{
+    \begin{theorem}[Mignotte]
+        Take $f, g \in \Z[X]$, and let $n = \deg f$.
+        If $g$ divides $f$, then
+        $$ \|g\|_{\infty} \le \binom{n-1}{\lceil n/2 \rceil}(\|f\|_2 + lc(f)) \equalscolon B_f$$
+    \end{theorem}
+}
+    \pause
+
+    \only<-4>{
+    To show that $f$ is irreducible, is enough to give a factorization of $f$ over $\Z/p^e [x]$, with $p^e > 2B_f + 1$, such that no nontrivial factor lifts as a factor of $f$ over $\Z[x]$.
+
+    Such factorization is free! Already part of the factorization algorithm.
+}
+
+    \pause
+    \begin{theorem}
+        $f \colonequals x^{6} - 3 x^{5} + 5 x^{4} - 5 x^{3} + 5 x^{2} - 3 x + 1$ is irreducible
+    \end{theorem}
+    \begin{block}{Proof \emoji{honey-pot}}
+        \begin{itemize}
+            \item[\emoji{framed-picture}]
+\texttt{sage: f.is\_irreducible()\\
+True}
+\pause
+\item[\emoji{mag-right}]
+\begin{itemize}
+    \item[\emoji{gift}] Over $\Z/3^e[x]$ $f$ factors as $g \cdot h$, with $\deg g = \deg h = 3$
+    \item[\emoji{gear}] the putative lifts to $\Z[x]$ do not divide $f$
+\end{itemize}
+        \end{itemize}
+    \end{block}
+    \pause
+    Our goal is to build a \emph{tactic} in lean to automatically generate such formal proofs.
+
+    \pause
+    Can we do a similar thing for class group computations? \emoji{teddy-bear}
+\end{frame}
+
+\end{document}
+
