@@ -5,6 +5,14 @@ J.A. Abbott.
 \newblock {Bounds on Factors in $\Z[x]$}.
 \newblock {\em J. Symbolic Comp.}, 50:532--563, 2013.
 
+\bibitem[Abb20]{Abbott2020a}
+John Abbott.
+\newblock {Certifying Irreducibility in $\Z[x]$}.
+\newblock In A.M. Bigatti, J.~Carette, J.H. Davenport, M.~Joswig, and
+  T.~de~Wolff, editors, {\em Mathematical Software --- ICMS 2020}, volume 12097
+  of {\em Springer Lecture Notes in Computer Science}, pages 462--472.
+  Springer, 2020.
+
 \bibitem[ASZ00]{Abbottetal2000a}
 J.A. Abbott, V.~Shoup, and P.~Zimmermann.
 \newblock {Factorization in $\Z[x]$: The Searching Phase}.

@@ -51,10 +51,11 @@
 \usepackage{color}
 \bibliographystyle{alpha}
 \title{Proving an Execution of an Algorithm Correct?}
-\author{ Alex J. Best\and Mario Carneiro \and Edgar Costa \and James Harold Davenport\\% \& Tim French\\
-\tt edgarc@mit.edu  masjhd@bath.ac.uk}
+\author{ Alex J. Best\and Mario Carneiro \and Edgar Costa \and James Harold Davenport}
+%\\% \& Tim French\\
 %(Thanks to RJB for the improved title)}
-\institute{Imperial College \and ?? \and M.I.T. \and University of Bath, Bath BA2 7AY, UK}%(visiting Waterloo)}
+\institute{Imperial College, {\tt alex.j.best@gmail.com} \and 
+C.M.U. {\tt digama0@gmail.com} \and M.I.T. {\tt edgarc@mit.edu}  \and University of Bath, Bath BA2 7AY, UK {\tt masjhd@bath.ac.uk}}%(visiting Waterloo)}
 \date{October 2023}
 \begin{document}
 \maketitle
@@ -192,7 +193,7 @@ We have seen that using 5 primes rather than Flint's choice of 3 would mean that
 \par
 Moving to seven primes doesn't help, as can be seen in Table \ref{tab:CZ}. We do get some progress at $p=41$ (11 primes),when the factorisation has degrees 2,2,4,23,31, ruling out possible degrees 12 and 21, leaving 4,23,27,31\dots{} as the options. $p=43$ then has factorisation degrees 1,3,3,27,28, ruling out 23. The next progress is at $p=59$, with factorisation shapes 1,5,8,17,31, ruling out both 4 and 27, thus forcing a 31/31 split.
 \section{So what is the certificate?}
-As far as we can tell, these are the components needed.
+As far as we can tell, these are the components needed for a proof of a factorisation, orbained directly from a prime, or via (H).
 \begin{enumerate}
 \item The 5(?) Musser primes (or the useful subset)
 \item The factorisations modulo these
@@ -238,6 +239,8 @@ There are various algorithms for factoring polynomials modulo $p$, but all we ne
 \begin{theorem}[After \cite{CantorZassenhaus1981}]
 A square-free polynomial $f$ of degree $d$ modulo $p$ is irreducible if $\gcd(f,x^{p^i}-x)\equiv 1 \pmod p$  for $1\le i\le d/2$.
 \end{theorem}
+
+Verifying the irreducibility of polynomials obtained by method (H) is in principle straightforward, we check that no small subset (at most half the size) gives rise to a true factor. If we are using an alternative (H') method, we may need a direct proof, as in \cite{Abbott2020a}.
 \section*{Acknowledgements}The fourth author is supported by EPSRC grant EP/T015713.
 \bibliography{../../../../../jhd}
 
