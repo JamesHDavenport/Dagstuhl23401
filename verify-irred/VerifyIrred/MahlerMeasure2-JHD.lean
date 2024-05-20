@@ -4,7 +4,8 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Alex J. Best, Edgar Costa, James H. Davenport
 -/
 
-import Mathlib.Data.Polynomial.RingDivision
+import Mathlib.Algebra.Polynomial.RingDivision
+import Mathlib.Algebra.Polynomial.Roots
 import Mathlib.Analysis.Complex.Basic
 import Mathlib.Data.Real.Sqrt
 --import Mathlib
@@ -54,10 +55,7 @@ lemma mahler_mul (f g : R[X]) :
   . simp [a1]
   by_cases a2: g=0
   . simp [a2]
-  have : f*g ≠ 0
-  . simp
-    rw [@not_or]
-    simp[a1,a2]
+  have : f*g ≠ 0 := by simp [a1,a2]
   simp [mahlerMeasure]
   rw [@mul_mul_mul_comm]
   rw [aroots_mul this]
@@ -105,7 +103,6 @@ theorem support_X_mul {R : Type u} [Semiring R] (p : R[X]) :
   cases i
   · simp
   · simp only [coeff_X_mul]
-    rw[Nat.succ_eq_add_one]
     simp
 
 lemma addLeftEmbedding_zero : addLeftEmbedding 0 = Function.Embedding.refl _ := by
@@ -124,7 +121,7 @@ theorem support_monomial_mul {R : Type u} [Semiring R] (p : R[X]) (n : ℕ) :
   . simp only [Nat.zero_eq, pow_zero, one_mul]
     rw[addRightEmbedding_zero]
     simp
-  . rw [@pow_succ]
+  . rw [@pow_succ']
     rw [@mul_assoc]
     rw [support_X_mul]
     rw [ih]
@@ -178,15 +175,18 @@ lemma L2normSq_sum (f : R[X]) :
     L2normSq f = ∑ k in Ioc 0 f.natDegree, ‖algebraMap R ℂ (f.coeff k)‖^2 := by
   simp [sum.subset]
 
-
 --lemma Mignotte1974L1a (p :  ℂ[X])  (α β: ℂ) : (L2normSq ((X+ Polynomial.C α)*p):ℂ) = ((‖α * p.coeff 0‖^2:ℝ):ℂ) + ∑ k in Ioc 0 p.natDegree, (( ((‖p.coeff (k-1)‖^2:ℝ):ℂ) +  α*p.coeff (k)*conj (p.coeff (k-1)) +conj ( α)*(p.coeff (k-1))*conj (p.coeff (k))+((‖α * p.coeff k‖^2:ℝ):ℂ)):ℂ) +(((‖p.coeff (p.natDegree)‖^2):ℝ):ℂ) := by
-lemma Mignotte1974L1a (p :  ℂ[X])  (α β: ℂ) : (L2normSq ((X+ Polynomial.C α)*p):ℂ) =  ( ∑ᶠ l:ℕ,  (( ((‖p.coeff (l)‖^2:ℝ)) +  α*p.coeff (l+1)*conj (p.coeff (l)) +conj ( α)*(p.coeff (l))*conj (p.coeff (l))+((‖α * p.coeff (l+1)‖^2:ℝ))).re):ℝ)  := by
+lemma Mignotte1974L1a (p :  ℂ[X])  (α β: ℂ) :
+    (L2normSq ((X+ Polynomial.C α)*p):ℂ) = ∑ᶠ l : ℕ,
+      ((‖p.coeff (l)‖^2:ℝ) +
+        α*p.coeff (l+1) * conj (p.coeff l) +
+        conj α * p.coeff l * conj (p.coeff (l+1)) +
+        (‖α * p.coeff (l+1)‖^2:ℝ)).re := by
   simp only [L2normSq_finsum]
-  congr; ext l 
+  congr; ext l
   refine (ofReal_re _).symm.trans ?_; congr
   simp [add_mul]
-  cases l <;> simp [Polynomial.coeff_X_mul_zero,mul_pow,normSq_eq_conj_mul_self,← normSq_eq_abs]
-   
+  cases l <;> simp [Polynomial.coeff_X_mul_zero, mul_pow, normSq_eq_conj_mul_self, ← normSq_eq_abs]
 
 --  their code below here
 lemma foobar_2  (g : ℂ[X]) (α β: ℂ) :
@@ -270,8 +270,8 @@ lemma finsum_shift (g : R[X]) (f : R -> R) (h: f 0 = 0):
     done
   have h4: Function.support ( fun i => f (if i = 0 then 0 else coeff g (i - 1) ) )  ⊆ (g.coeff ∘ Nat.pred).support := by
     tauto
-  
-  
+
+
 
 
 
@@ -284,15 +284,15 @@ lemma finsum_shift (g : R[X]) (f : R -> R) (h: f 0 = 0):
 #exit
 
 
-  
-    
 
-    
 
-  
+
+
+
+
 
   -- rw [ite]
-  
+
 
 
 
@@ -304,11 +304,11 @@ open Complex
 lemma foobar (g : ℂ[X]) (α: ℂ) :
     L2normSq ( (X - Polynomial.C α ) *g ) = L2normSq (( (conj α) • X - Polynomial.C 1) * g) := by
   have := foobar_1 (β := α) (α := 1)
-  simp only [one_smul, ne_eq, ge_iff_le, ite_not, mul_ite, mul_zero, one_mul, norm_eq_abs] at this 
+  simp only [one_smul, ne_eq, ge_iff_le, ite_not, mul_ite, mul_zero, one_mul, norm_eq_abs] at this
   rw[this]
   rw [map_one]
   have := foobar_1 (β := 1) (α := conj α)
-  simp only [map_one, ne_eq, ge_iff_le, ite_not, mul_ite, mul_zero, one_mul, norm_eq_abs] at this 
+  simp only [map_one, ne_eq, ge_iff_le, ite_not, mul_ite, mul_zero, one_mul, norm_eq_abs] at this
   rw[this]
   simp_rw [Complex.sq_abs]
   simp_rw [Complex.normSq_sub]
