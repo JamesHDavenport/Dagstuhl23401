@@ -175,18 +175,36 @@ lemma L2normSq_sum (f : R[X]) :
     L2normSq f = ∑ k in Ioc 0 f.natDegree, ‖algebraMap R ℂ (f.coeff k)‖^2 := by
   simp [sum.subset]
 
+-- set_option trace.Meta.Tactic.simp.rewrite true in
 --lemma Mignotte1974L1a (p :  ℂ[X])  (α β: ℂ) : (L2normSq ((X+ Polynomial.C α)*p):ℂ) = ((‖α * p.coeff 0‖^2:ℝ):ℂ) + ∑ k in Ioc 0 p.natDegree, (( ((‖p.coeff (k-1)‖^2:ℝ):ℂ) +  α*p.coeff (k)*conj (p.coeff (k-1)) +conj ( α)*(p.coeff (k-1))*conj (p.coeff (k))+((‖α * p.coeff k‖^2:ℝ):ℂ)):ℂ) +(((‖p.coeff (p.natDegree)‖^2):ℝ):ℂ) := by
-lemma Mignotte1974L1a (p :  ℂ[X])  (α β: ℂ) :
-    (L2normSq ((X+ Polynomial.C α)*p):ℂ) = ∑ᶠ l : ℕ,
-      ((‖p.coeff (l)‖^2:ℝ) +
-        α*p.coeff (l+1) * conj (p.coeff l) +
-        conj α * p.coeff l * conj (p.coeff (l+1)) +
-        (‖α * p.coeff (l+1)‖^2:ℝ)).re := by
+lemma Mignotte1974L1a (p :  ℂ[X])  (α: ℂ) :
+    (L2normSq ((X + C α) * p):ℂ) = ∑ᶠ k : ℕ,
+      ((‖(X * p).coeff k‖^2:ℝ) +
+        α*p.coeff k * conj ((X * p).coeff k) +
+        conj α * (X * p).coeff k * conj (p.coeff k) +
+        (‖α * p.coeff k‖^2:ℝ)).re := by
   simp only [L2normSq_finsum]
-  congr; ext l
+  congr; ext k
   refine (ofReal_re _).symm.trans ?_; congr
   simp [add_mul]
-  cases l <;> simp [Polynomial.coeff_X_mul_zero, mul_pow, normSq_eq_conj_mul_self, ← normSq_eq_abs]
+  cases k <;> simp [mul_pow, normSq_eq_conj_mul_self, ← normSq_eq_abs, ← ofReal_pow]
+  ring
+
+example (a : ℝ) (b : ℂ) : a • b = a * b := by exact?
+
+lemma Mignotte1974L1b (p :  ℂ[X]) (α : ℂ) (α0 : α ≠ 0) :
+    abs α ^ 2 * (L2normSq ((X + C (conj α)⁻¹) * p) : ℂ) = ∑ᶠ k : ℕ,
+      ((‖(X * p).coeff k‖^2:ℝ) +
+        α*p.coeff k * conj ((X * p).coeff k) +
+        conj α * (X * p).coeff k * conj (p.coeff k) +
+        (‖α * p.coeff k‖^2:ℝ)).re := by
+  simp only [L2normSq_finsum]
+  rw [← ofReal_pow, ← ofReal_mul, mul_finsum]
+  congr; ext k
+  refine (ofReal_re _).symm.trans ?_; congr
+  simp [add_mul]
+  cases k <;> simp [mul_pow, normSq_eq_conj_mul_self, ← normSq_eq_abs, ← ofReal_pow, α0]
+  ring
 
 --  their code below here
 lemma foobar_2  (g : ℂ[X]) (α β: ℂ) :
