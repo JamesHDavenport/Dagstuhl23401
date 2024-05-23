@@ -27,9 +27,10 @@ theorem foo (f : Polynomial ℤ)
     (B : ℕ)
     (B_is_max : ∀ g, g ∣ f → ∀ i, |g.coeff i| ≤ B)
     (hn : 2 * B ≤ p ^ n)
-    (qr : Finset (Fin m) → ℕ ⊕ (Polynomial ℤ × Polynomial ℤ)) -- from CAS
+    (qr : {S : Finset (Fin m) // S.card ≤ m/2} →
+      ℕ ⊕ (Polynomial ℤ × Polynomial ℤ)) -- from CAS
     (hqr : ∀ S,
-      let f' := toZ (∏ i ∈ S, fi i)
+      let f' := toZ (∏ i ∈ S.1, fi i)
       match qr S with
       | .inl k => |f'.coeff k| > B
       | .inr (q, r) => f = q * f' + r ∧ r.degree < f'.degree ∧ r ≠ 0)
