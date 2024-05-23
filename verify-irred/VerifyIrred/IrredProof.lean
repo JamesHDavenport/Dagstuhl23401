@@ -16,7 +16,6 @@ theorem zassenhaus_but_not_really
     (hgcd : ∀ d : ℕ, 2 * d ≤ f.degree → IsCoprime f (X^(p^d) - X))
     : Irreducible f := by
   sorry
-
 theorem foo (f : Polynomial ℤ)
     (p : ℕ) (pp : Prime p) -- from CAS
     (n : ℕ) -- from CAS
@@ -27,7 +26,7 @@ theorem foo (f : Polynomial ℤ)
     (B : ℕ)
     (B_is_max : ∀ g, g ∣ f → ∀ i, |g.coeff i| ≤ B)
     (hn : 2 * B ≤ p ^ n)
-    (qr : {S : Finset (Fin m) // S.card ≤ m/2} →
+    (qr : {S : Finset (Fin m) // S.card ≤ m/2 ∨ 2*S.card = m ∧ S.sort (·≤·) < Sᶜ.sort (·≤·)} →
       ℕ ⊕ (Polynomial ℤ × Polynomial ℤ)) -- from CAS
     (hqr : ∀ S,
       let f' := toZ (∏ i ∈ S.1, fi i)
