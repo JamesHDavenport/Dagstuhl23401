@@ -192,18 +192,17 @@ lemma Mignotte1974L1a (p :  ℂ[X])  (α: ℂ) :
 
 example (a : ℝ) (b : ℂ) : a • b = a * b := by exact?
 
-lemma Mignotte1974L1b (p :  ℂ[X]) (α : ℂ) (α0 : α ≠ 0) :
-    abs α ^ 2 * (L2normSq ((X + C (conj α)⁻¹) * p) : ℂ) = ∑ᶠ k : ℕ,
-      ((‖(X * p).coeff k‖^2:ℝ) +
+lemma Mignotte1974L1b (p :  ℂ[X])  (α: ℂ) :
+    (L2normSq ((C ((‖α‖^2:ℝ):ℂ))*(X + C (conj α)) * p):ℂ) = ∑ᶠ k : ℕ,
+      ((‖α * (X * p).coeff k‖^2:ℝ) +
         α*p.coeff k * conj ((X * p).coeff k) +
         conj α * (X * p).coeff k * conj (p.coeff k) +
-        (‖α * p.coeff k‖^2:ℝ)).re := by
+        (‖p.coeff k‖^2:ℝ)).re := by
   simp only [L2normSq_finsum]
-  rw [← ofReal_pow, ← ofReal_mul, mul_finsum]
   congr; ext k
   refine (ofReal_re _).symm.trans ?_; congr
   simp [add_mul]
-  cases k <;> simp [mul_pow, normSq_eq_conj_mul_self, ← normSq_eq_abs, ← ofReal_pow, α0]
+  cases k <;> simp [mul_pow, normSq_eq_conj_mul_self, ← normSq_eq_abs, ← ofReal_pow]
   ring
 
 --  their code below here
