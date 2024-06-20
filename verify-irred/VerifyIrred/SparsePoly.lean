@@ -1,14 +1,15 @@
 import Mathlib.Algebra.Polynomial.Eval
+import Mathlib
 
 namespace SparsePoly
 open Polynomial
 
-structure SparsePoly (R : Type) [Ring R] : Type where
+structure SparsePoly (R : Type) [CommRing R] : Type where
   coeffs : List (ℕ × R)
   sorted : coeffs.Sorted (·.1 > ·.1)
   nonzero : ∀ x ∈ coeffs, x.2 ≠ 0
 
-variable [Ring R] [DecidableEq R]
+variable [CommRing R] [DecidableEq R]
 def ofSortedList
     (coeffs : List (ℕ × R)) (sorted : coeffs.Sorted (·.1 > ·.1)) :
     SparsePoly R where
@@ -102,13 +103,16 @@ noncomputable def toPolyCore : List (ℕ × R) → R[X]
 noncomputable def toPoly (x : SparsePoly R) : Polynomial R :=
   toPolyCore x.coeffs
 
-instance : Ring (SparsePoly R) := by
+instance : CommRing (SparsePoly R) := by
   refine' { zero := 0, one := 1, add := (·+·), mul := (·*·), .. } <;> sorry
 
-def CHom : R →+* SparsePoly R := by refine' { toFun := C, ..} <;> sorry
+instance : Algebra R (SparsePoly R) := by refine' { toFun := C, ..} <;> sorry
 
-noncomputable def toPolyEquiv : SparsePoly R ≃ Polynomial R where
+noncomputable def toPolyEquiv : SparsePoly R ≃ₐ[R] Polynomial R where
   toFun := toPoly
-  invFun p := p.eval₂ CHom X
+  invFun p := p.eval₂ (algebraMap ..) X
   left_inv := sorry
   right_inv := sorry
+  map_add' := sorry
+  map_mul' := sorry
+  commutes' := sorry
