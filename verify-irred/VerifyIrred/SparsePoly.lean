@@ -1,13 +1,13 @@
 import Mathlib.Algebra.Polynomial.Eval
 import Mathlib
 
-namespace SparsePoly
-open Polynomial
-
 structure SparsePoly (R : Type) [CommRing R] : Type where
   coeffs : List (ℕ × R)
   sorted : coeffs.Sorted (·.1 > ·.1)
   nonzero : ∀ x ∈ coeffs, x.2 ≠ 0
+
+namespace SparsePoly
+open Polynomial
 
 variable [CommRing R] [DecidableEq R]
 def ofSortedList
@@ -26,6 +26,13 @@ instance : One (SparsePoly R) where
   one := C 1
 
 def degLt (a : ℕ) (l : List (ℕ × R)) : Prop := ∀ x ∈ l, x.1 < a
+
+noncomputable def toPolyCore : List (ℕ × R) → R[X]
+  | [] => 0
+  | (i, a) :: x => Polynomial.C a * Polynomial.X^i + toPolyCore x
+
+noncomputable def toPoly (x : SparsePoly R) : Polynomial R :=
+  toPolyCore x.coeffs
 
 def addCore : List (ℕ × R) → List (ℕ × R) → List (ℕ × R)
   | [], y => y
@@ -96,13 +103,6 @@ instance : Mul (SparsePoly R) where
       let (j, b) ← y.coeffs
       return (i + j, a * b)
 
-noncomputable def toPolyCore : List (ℕ × R) → R[X]
-  | [] => 0
-  | (i, a) :: x => Polynomial.C a * Polynomial.X^i + toPolyCore x
-
-noncomputable def toPoly (x : SparsePoly R) : Polynomial R :=
-  toPolyCore x.coeffs
-
 instance : CommRing (SparsePoly R) := by
   refine' { zero := 0, one := 1, add := (·+·), mul := (·*·), .. } <;> sorry
 
@@ -116,3 +116,11 @@ noncomputable def toPolyEquiv : SparsePoly R ≃ₐ[R] Polynomial R where
   map_add' := sorry
   map_mul' := sorry
   commutes' := sorry
+
+@[simp]
+theorem ofPoly_X : toPolyEquiv.symm Polynomial.X = (X : SparsePoly R) := by
+  simp [toPolyEquiv]
+
+@[simp]
+theorem toPoly_X : (X : SparsePoly R).toPoly = Polynomial.X := by
+  rw [← toPolyEquiv.apply_symm_apply Polynomial.X, ofPoly_X]; rfl
