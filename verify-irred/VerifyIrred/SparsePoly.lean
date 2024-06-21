@@ -1,3 +1,11 @@
+-- A computational representation of Polynomials in one (anonymous) variable over a ring R
+-- Computational implies that need DecidableEq for R
+-- Started by Mario Carniero at Hausdorff Institute June 2024
+-- Representation is as a list of pairs (exponent, coefficient) in ℕ × R
+-- Exponents in decreasing order, coefficients non-zero (so zero polynomial is empty list)
+-- Note that Lean allows the ring with just 0 (so 1=0)
+-- JHD: we may wish to rethink allowing this, as it causes extra checks
+
 import Mathlib.Algebra.Polynomial.Eval
 import Mathlib
 
