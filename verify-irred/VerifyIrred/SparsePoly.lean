@@ -1,4 +1,4 @@
--- A computational representation of Polynomials in one (anonymous) variable over a ring R
+-- A computational representation of Polynomials in one (anonymous) variable over a commutative ring R
 -- Computational implies that need DecidableEq for R
 -- Started by Mario Carniero at Hausdorff Institute June 2024
 -- Representation is as a list of pairs (exponent, coefficient) in ℕ × R
@@ -29,12 +29,14 @@ instance : Zero (SparsePoly R) where
   zero := { coeffs := [], sorted := .nil, nonzero := nofun }
 
 def C (r : R) : SparsePoly R := ofSortedList [(0, r)] (List.sorted_singleton _)
+-- Need the ofSortedList to deal with r=0
 
 instance : One (SparsePoly R) where
   one := C 1
 
 def degLt (a : ℕ) (l : List (ℕ × R)) : Prop := ∀ x ∈ l, x.1 < a
 
+-- Relate our structures to the Polynomial of Mathlib
 noncomputable def toPolyCore : List (ℕ × R) → R[X]
   | [] => 0
   | (i, a) :: x => Polynomial.C a * Polynomial.X^i + toPolyCore x
@@ -50,14 +52,45 @@ def addCore : List (ℕ × R) → List (ℕ × R) → List (ℕ × R)
       (j, b) :: addCore ((i, a) :: x) y
     else if j < i then
       (i, a) :: addCore x ((j, b) :: y)
-    else
+    else  -- Don't we want to worry about a+b=0
       (i, a + b) :: addCore x y
+
+theorem addCore_degLt (n : ℕ) : ∀ (x y : List (ℕ × R)),
+    degLt n x → degLt n y →
+    degLt n (addCore x y) := by
+  sorry
 
 theorem addCore_sorted : ∀ (x y : List (ℕ × R)),
     x.Sorted (·.1 > ·.1) → y.Sorted (·.1 > ·.1) →
-    (addCore x y).Sorted (·.1 > ·.1) := sorry
-  -- | [], y, _, hy => hy
-  -- | x, [], hx, _ => hx
+    (addCore x y).Sorted (·.1 > ·.1) := by
+  intro x y hx hy
+  unfold addCore
+  split
+  exact hy
+  exact hx
+  split
+  constructor
+  apply addCore_degLt
+  rw [addCore]
+  induction x, y using addCore.induct
+  · intro h1 h2
+    rw [addCore]
+    exact h2
+  · intro h1 h2
+    rw [addCore]
+    exact h1
+    assumption
+  · intro h1 h2
+    rw [addCore]
+    sorry
+  · sorry
+  · sorry
+  -- | [], y, _, hy => by
+  --     rw [addCore]
+  --     exact hy
+  -- | x, [], hx, _ => by
+  --     rw [addCore]
+  --     exact hx
   -- | (i, a) :: x, (j, b) :: y, hx, hy =>
   --   if hi : i < j then
   --     let ⟨hb, hy⟩ := List.pairwise_cons.1 hy
