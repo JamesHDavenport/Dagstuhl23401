@@ -12,14 +12,22 @@ import Mathlib.Algebra.Polynomial.Eval
 import Mathlib.RingTheory.MvPolynomial.Basic
 import Mathlib
 
+@[ext] structure MvDegrees (nvars : ℕ) where
+  degrees: Array ℕ
+  correct: degrees.size = nvars
+
 @[ext] structure MvMonomial (R : Type) (nvars : ℕ) where
       Totaldegree: ℕ
       Coeff : R
-      Degrees: Array ℕ
+      Degrees: MvDegrees nvars
+
+@[ext] structure WOrdering (nvars : ℕ) where
+   precedes :  MvDegrees nvars -> MvDegrees nvars -> Bool
+   -- Need to define this as a total order
 
 @[ext] structure MvSparsePoly (R : Type) (nvars : ℕ) [CommRing R] : Type where
   terms : List (MvMonomial R nvars)
---  sorted : coeffs.Sorted (·.1 > ·.1)
+--  sorted : terms.Sorted (·.1 > ·.1)
   nonzero : ∀ x ∈ terms, x.Coeff ≠ 0
 
 namespace MvSparsePoly
