@@ -36,6 +36,11 @@ def ofSortedList
   sorted := sorted.sublist (List.filter_sublist _)
   nonzero := by simp [List.mem_filter]
 
+theorem ofSortedList_of_nonzero {R : Type} [CommRing R] [DecidableEq R]
+    (coeffs : List (ℕ × R)) (nonzero : ∀ x ∈ coeffs, x.2 ≠ 0) (sorted) :
+    (ofSortedList coeffs sorted).coeffs = coeffs := by
+  simp (config := {contextual := true}) [ofSortedList, nonzero]
+
 instance : Zero (SparsePoly R) where
   zero := { coeffs := [], sorted := .nil, nonzero := nofun }
 
@@ -172,12 +177,13 @@ instance : Mul (SparsePoly R) where
 instance : Neg (SparsePoly R) where
   neg x := C (-1) * x
 
-
 instance : CommRing (SparsePoly R) where
   add := (·+·)
   add_assoc := sorry
   zero := 0
-  zero_add := sorry
+  zero_add a := show ofSortedList (addCore [] ..) _ = _ by
+    simp [addCore]; cases a; ext1; simp
+    exact ofSortedList_of_nonzero _ ‹_› _
   add_zero := sorry
   nsmul := (C (R := R) · * ·)
   add_comm := sorry
