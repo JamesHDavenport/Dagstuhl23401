@@ -33,22 +33,22 @@ import Mathlib
 namespace MvSparsePoly
 open MvPolynomial
 
-instance [CommRing R] [Lean.ToFormat R] : Lean.ToFormat (MvSparsePoly R nvars) where
-  format x :=
-    have := x.terms.foldl (init := none) fun (f : Option Lean.Format) (i, x) =>
-      let monomial := if i = 0 then f!"({x})" else if i = 1 then f!"({x})*X" else f!"({x})*X^{i}"
-      match f with
-      | none => monomial
-      | some f => f ++ " + " ++ monomial
-    this.getD f!"0"
-instance [CommRing R] [Lean.ToFormat R] : Repr (SparsePoly R) where
-  reprPrec x _ := Lean.format x
+--instance [CommRing R] [Lean.ToFormat R] : Lean.ToFormat (MvSparsePoly R nvars) where
+--  format x :=
+--    have := x.terms.foldl (init := none) fun (f : Option Lean.Format) (i, x) =>
+--      let monomial := if i = 0 then f!"({x})" else if i = 1 then f!"({x})*X" else f!"({x})*X^{i}"
+--      match f with
+--      | none => monomial
+--      | some f => f ++ " + " ++ monomial
+--    this.getD f!"0"
+--instance [CommRing R] [Lean.ToFormat R] : Repr (SparsePoly R) where
+--  reprPrec x _ := Lean.format x
 
 variable [CommRing R] [DecidableEq R]
-def ofSortedList
-    (coeffs : List (ℕ × R)) (sorted : coeffs.Sorted (·.1 > ·.1)) :
-    SparsePoly R where
-  coeffs := coeffs.filter (·.2 ≠ 0)
+def ofSortedList WOrdering
+    (terms : List (MvMonomial R nvars)) (sorted : terms.Sorted (precedes ·.Coeff ·.Coeff)) :
+    MvSparsePoly R nvars where
+  terms := terms.filter (·.Coeff ≠ 0)
   sorted := sorted.sublist (List.filter_sublist _)
   nonzero := by simp [List.mem_filter]
 
