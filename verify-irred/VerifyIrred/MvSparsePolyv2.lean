@@ -15,20 +15,47 @@ import Mathlib
 @[ext] structure MvDegrees (nvars : ℕ) where
   degrees: Array ℕ
   correct: degrees.size = nvars
+  totalDegree : ℕ
+  totalDegree_eq : totalDegree = degrees.foldl (· + ·) 0
 
-@[ext] structure MvMonomial (R : Type) (nvars : ℕ) where
-      Totaldegree: ℕ
-      Coeff : R
-      Degrees: MvDegrees nvars
+instance : AddCommMonoid (MvDegrees nvars) where
+  add a b := {
+    degrees := a.degrees.zipWith b.degrees (· + ·)
+    correct := sorry
+    totalDegree := a.totalDegree + b.totalDegree
+    totalDegree_eq := sorry
+  }
+  add_assoc := sorry
+  zero := {
+    degrees := Array.mkArray nvars 0
+    correct := by simp
+    totalDegree := 0
+    totalDegree_eq := sorry
+  }
+  zero_add := sorry
+  add_zero := sorry
+  nsmul n a := {
+    degrees := a.degrees.map (· * n)
+    correct := sorry
+    totalDegree := a.totalDegree * n
+    totalDegree_eq := sorry
+  }
+  nsmul_zero := sorry
+  nsmul_succ := sorry
+  add_comm := sorry
 
-@[ext] structure WOrdering (nvars : ℕ) where
-   precedes :  MvDegrees nvars -> MvDegrees nvars -> Bool
-   -- Need to define this as a total order
+-- @[ext] structure MvMonomial (R : Type) (nvars : ℕ) where
+--   coeff : R
+--   degrees : MvDegrees nvars
 
-@[ext] structure MvSparsePoly (R : Type) (nvars : ℕ) [CommRing R] : Type where
-  terms : List (MvMonomial R nvars)
---  sorted : terms.Sorted (·.1 > ·.1)
-  nonzero : ∀ x ∈ terms, x.Coeff ≠ 0
+@[ext] class WOrdering (nvars : ℕ) extends LinearOrder (MvDegrees nvars) where
+  zero_le {x : MvDegrees nvars} : 0 ≤ x
+  add_le_add {x y z : MvDegrees nvars} : x ≤ y → x + z ≤ y + z
+
+@[ext] structure MvSparsePoly (R : Type) [CommRing R] (nvars : ℕ) [WOrdering nvars] : Type where
+  terms : List (MvDegrees nvars × R)
+  sorted : terms.Sorted (·.1 > ·.1)
+  nonzero : ∀ x ∈ terms, x.2 ≠ 0
 
 namespace MvSparsePoly
 open MvPolynomial
@@ -44,32 +71,35 @@ open MvPolynomial
 --instance [CommRing R] [Lean.ToFormat R] : Repr (SparsePoly R) where
 --  reprPrec x _ := Lean.format x
 
-variable [CommRing R] [DecidableEq R]
-def ofSortedList WOrdering
-    (terms : List (MvMonomial R nvars)) (sorted : terms.Sorted (precedes ·.Coeff ·.Coeff)) :
+variable {R : Type} [CommRing R] [DecidableEq R] [WOrdering nvars]
+def ofSortedList
+    (terms : List (MvDegrees nvars × R)) (sorted : terms.Sorted (·.1 > ·.1)) :
     MvSparsePoly R nvars where
-  terms := terms.filter (·.Coeff ≠ 0)
+  terms := terms.filter (·.2 ≠ 0)
   sorted := sorted.sublist (List.filter_sublist _)
   nonzero := by simp [List.mem_filter]
 
-instance : Zero (SparsePoly R) where
-  zero := { coeffs := [], sorted := .nil, nonzero := nofun }
+instance : Zero (MvSparsePoly R nvars) where
+  zero := { terms := [], sorted := .nil, nonzero := nofun }
 
-def C (r : R) : SparsePoly R := ofSortedList [(0, r)] (List.sorted_singleton _)
+def C (r : R) : MvSparsePoly R nvars := ofSortedList [(0, r)] (List.sorted_singleton _)
 -- Need the ofSortedList to deal with r=0
 
-instance : One (SparsePoly R) where
+instance : One (MvSparsePoly R nvars) where
   one := C 1
 
 def degLt (a : ℕ) (l : List (ℕ × R)) : Prop := ∀ x ∈ l, x.1 < a
 
 -- Relate our structures to the Polynomial of Mathlib
-noncomputable def toPolyCore : List (ℕ × R) → R[X]
-  | [] => 0
-  | (i, a) :: x => Polynomial.C a * Polynomial.X^i + toPolyCore x
+noncomputable def MvDegrees.toFinsupp (deg : MvDegrees nvars) : Fin nvars →₀ ℕ :=
+  Finsupp.onFinset Finset.univ (fun i => deg.degrees[i]'(by simp [deg.correct, i.2])) (by simp)
 
-noncomputable def toPoly (x : SparsePoly R) : Polynomial R :=
-  toPolyCore x.coeffs
+noncomputable def toPolyCore : List (MvDegrees nvars × R) → MvPolynomial (Fin nvars) R
+  | [] => 0
+  | (i, a) :: x => monomial (MvDegrees.toFinsupp i) a + toPolyCore x
+
+noncomputable def toPoly (x : MvSparsePoly R nvars) : MvPolynomial (Fin nvars) R :=
+  toPolyCore x.terms
 
 def addCore : List (ℕ × R) → List (ℕ × R) → List (ℕ × R)
   | [], y => y
@@ -152,10 +182,10 @@ theorem addCore_sorted : ∀ {x y : List (ℕ × R)},
       · exact addCore_sorted hx' hy'
 termination_by x y => x.length + y.length
 
-instance : Add (SparsePoly R) where
+instance : Add (MvSparsePoly R nvars) where
   add x y :=
-    let coeffs := addCore x.coeffs y.coeffs
-    ofSortedList coeffs (addCore_sorted x.sorted y.sorted)
+    let terms := addCore x.terms y.terms
+    ofSortedList terms (addCore_sorted x.sorted y.sorted)
 
 def dedupList : List (ℕ × R) → List (ℕ × R)
   | (i, a) :: (j, b) :: x =>
@@ -165,31 +195,31 @@ def dedupList : List (ℕ × R) → List (ℕ × R)
       (i, a) :: dedupList ((j, b) :: x)
   | x => x
 
-theorem dedupList_sorted (coeffs : List (ℕ × R))
-  (sorted : coeffs.Sorted (·.1 ≥ ·.1)) :
-  (dedupList coeffs).Sorted (·.1 > ·.1) := sorry
+theorem dedupList_sorted (terms : List (ℕ × R))
+  (sorted : terms.Sorted (·.1 ≥ ·.1)) :
+  (dedupList terms).Sorted (·.1 > ·.1) := sorry
 
-def ofList (coeffs : List (ℕ × R)) : SparsePoly R :=
-  let coeffs' := coeffs.mergeSort (·.1 ≥ ·.1)
+def ofList (terms : List (ℕ × R)) : MvSparsePoly R nvars :=
+  let terms' := terms.mergeSort (·.1 ≥ ·.1)
   have : IsTotal (ℕ × R) (·.1 ≥ ·.1) := sorry
   have : IsTrans (ℕ × R) (·.1 ≥ ·.1) := sorry
-  ofSortedList (dedupList coeffs')
-    (dedupList_sorted coeffs' (coeffs.sorted_mergeSort _))
+  ofSortedList (dedupList terms')
+    (dedupList_sorted terms' (terms.sorted_mergeSort _))
 
-def X : SparsePoly R := ofSortedList [(1, 1)] (List.sorted_singleton _)
+def X : MvSparsePoly R nvars := ofSortedList [(1, 1)] (List.sorted_singleton _)
 
-instance : Mul (SparsePoly R) where
+instance : Mul (MvSparsePoly R nvars) where
   mul x y :=
     ofList do
-      let (i, a) ← x.coeffs
-      let (j, b) ← y.coeffs
+      let (i, a) ← x.terms
+      let (j, b) ← y.terms
       return (i + j, a * b)
 
-instance : Neg (SparsePoly R) where
+instance : Neg (MvSparsePoly R nvars) where
   neg x := C (-1) * x
 
 
-instance : CommRing (SparsePoly R) where
+instance : CommRing (MvSparsePoly R nvars) where
   add := (·+·)
   add_assoc := sorry
   zero := 0
@@ -226,19 +256,19 @@ instance : CommRing (SparsePoly R) where
   --   zsmul := zsmulRec
   --   .. } <;> sorry
 #print AddMonoidWithOne
-instance : Algebra R (SparsePoly R) := by
+instance : Algebra R (MvSparsePoly R nvars) := by
   refine' { toFun := C, smul := fun a r => C a * r, ..} <;> sorry
 
 class IsExactDiv (R : Type*) [Monoid R] [Div R] : Prop where
   mul_div_cancel {a b : R} : b ∣ a → b * (a / b) = a
 
-def degree (a : SparsePoly R) : ℕ := (a.coeffs.headD (0, 0)).1
+def degree (a : MvSparsePoly R nvars) : ℕ := (a.terms.headD (0, 0)).1
 
-def gcdPrim (a b : SparsePoly R) : SparsePoly R :=
-  match a.coeffs with
+def gcdPrim (a b : MvSparsePoly R nvars) : MvSparsePoly R nvars :=
+  match a.terms with
   | [] => b
   | (i, x) :: as =>
-    match b.coeffs with
+    match b.terms with
     | [] => a
     | (j, y) :: bs =>
       if i > j then
@@ -248,19 +278,19 @@ def gcdPrim (a b : SparsePoly R) : SparsePoly R :=
 termination_by a.degree + b.degree
 decreasing_by all_goals sorry
 
-def content [CancelCommMonoidWithZero R] [GCDMonoid R] (a : SparsePoly R) : R :=
-  a.coeffs.foldl (init := 0) (gcd · ·.2)
+def content [CancelCommMonoidWithZero R] [GCDMonoid R] (a : MvSparsePoly R nvars) : R :=
+  a.terms.foldl (init := 0) (gcd · ·.2)
 
 def primitivePart [CancelCommMonoidWithZero R] [GCDMonoid R]
-    [Div R] [IsExactDiv R] (a : SparsePoly R) : SparsePoly R where
-  coeffs :=
+    [Div R] [IsExactDiv R] (a : MvSparsePoly R nvars) : MvSparsePoly R nvars where
+  terms :=
     let b := a.content
-    a.coeffs.map fun (i, a) => (i, a / b)
+    a.terms.map fun (i, a) => (i, a / b)
   sorted := sorry
   nonzero := sorry
 
 nonrec def gcd [CancelCommMonoidWithZero R] [GCDMonoid R]
-    [Div R] [IsExactDiv R] (a b : SparsePoly R) : SparsePoly R :=
+    [Div R] [IsExactDiv R] (a b : MvSparsePoly R nvars) : MvSparsePoly R nvars :=
   gcd a.content b.content • (gcdPrim a b).primitivePart
 
 instance : IsExactDiv ℤ where
@@ -272,8 +302,8 @@ instance {R} [CommGroupWithZero R] : IsExactDiv R where
     simpa only [zero_dvd_iff] using h
 
 -- divRem a b = (q, r) -> a = b * q + r
-def divRem [Div R] (a b : SparsePoly R) : SparsePoly R × SparsePoly R :=
-  match a.coeffs, b.coeffs with
+def divRem [Div R] (a b : MvSparsePoly R nvars) : MvSparsePoly R nvars × MvSparsePoly R nvars :=
+  match a.terms, b.terms with
   | (i, x) :: _, (j, y) :: _ =>
     if i < j then
       (0, a)
@@ -288,18 +318,18 @@ def divRem [Div R] (a b : SparsePoly R) : SparsePoly R × SparsePoly R :=
 termination_by a.degree
 decreasing_by all_goals sorry
 
-instance [Div R] : Div (SparsePoly R) where
+instance [Div R] : Div (MvSparsePoly R nvars) where
   div a b := (divRem a b).1
 
-instance [Div R] [IsExactDiv R] : IsExactDiv (SparsePoly R) where
+instance [Div R] [IsExactDiv R] : IsExactDiv (MvSparsePoly R nvars) where
   mul_div_cancel h := sorry
 
-instance : DecidableEq (SparsePoly R) := fun a b =>
-  decidable_of_iff' (a.coeffs = b.coeffs) (SparsePoly.ext_iff ..)
+instance : DecidableEq (MvSparsePoly R nvars) := fun a b =>
+  decidable_of_iff' (a.terms = b.terms) (SparsePoly.ext_iff ..)
 
 #eval (X * (C X * X + C (X + 2) : SparsePoly (SparsePoly ℤ))) / X
 
-noncomputable def toPolyEquiv : SparsePoly R ≃ₐ[R] Polynomial R where
+noncomputable def toPolyEquiv : MvSparsePoly R nvars ≃ₐ[R] Polynomial R where
   toFun := toPoly
   invFun p := p.eval₂ (algebraMap ..) X
   left_inv := sorry
@@ -309,9 +339,9 @@ noncomputable def toPolyEquiv : SparsePoly R ≃ₐ[R] Polynomial R where
   commutes' := sorry
 
 @[simp]
-theorem ofPoly_X : toPolyEquiv.symm Polynomial.X = (X : SparsePoly R) := by
+theorem ofPoly_X : toPolyEquiv.symm Polynomial.X = (X : MvSparsePoly R nvars) := by
   simp [toPolyEquiv]
 
 @[simp]
-theorem toPoly_X : (X : SparsePoly R).toPoly = Polynomial.X := by
+theorem toPoly_X : (X : MvSparsePoly R nvars).toPoly = Polynomial.X := by
   rw [← toPolyEquiv.apply_symm_apply Polynomial.X, ofPoly_X]; rfl
