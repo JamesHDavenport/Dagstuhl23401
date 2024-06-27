@@ -52,6 +52,9 @@ instance : AddCommMonoid (MvDegrees nvars) where
   zero_le {x : MvDegrees nvars} : 0 ≤ x
   add_le_add {x y z : MvDegrees nvars} : x ≤ y → x + z ≤ y + z
 
+-- def lexordering (a: MvDegrees nvars,b: MvDegrees nvars) : Bool := sorry
+-- But also needs to be a member of WOrdering
+
 @[ext] structure MvSparsePoly (R : Type) [CommRing R] (nvars : ℕ) [WOrdering nvars] : Type where
   terms : List (MvDegrees nvars × R)
   sorted : terms.Sorted (·.1 > ·.1)
