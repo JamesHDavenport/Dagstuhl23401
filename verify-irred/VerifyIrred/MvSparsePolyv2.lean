@@ -107,7 +107,24 @@ noncomputable def toPoly (x : MvSparsePoly R nvars) : MvPolynomial (Fin nvars) R
 def addCore : List (MvDegrees nvars × R) → List (MvDegrees nvars × R) → List (MvDegrees nvars × R)
   | [], y => y
   | x, [] => x
+  | xx@((i, a) :: x), yy@((j, b) :: y) =>
+    if i < j then
+      (j, b) :: addCore xx y
+    else if j < i then
+      (i, a) :: addCore x yy
+    else  -- Don't we want to worry about a+b=0
+      (i, a + b) :: addCore x y
+
+  fun(x y) =>
+    match x with
+    | [] => y
+    | (i,r) :: xx =>
+    |    match y
+  | [], y => y
+  | x, [] => x
   | x, y =>
+      match
+
     x.head.1 > y.head.1 =>
       x.head :: addCore(x.tail,y)
     x.head.1 < y.head.1 =>
