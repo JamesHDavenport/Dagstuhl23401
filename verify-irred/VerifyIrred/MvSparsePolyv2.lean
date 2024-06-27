@@ -104,51 +104,52 @@ noncomputable def toPolyCore : List (MvDegrees nvars × R) → MvPolynomial (Fin
 noncomputable def toPoly (x : MvSparsePoly R nvars) : MvPolynomial (Fin nvars) R :=
   toPolyCore x.terms
 
-def addCore : List (ℕ × R) → List (ℕ × R) → List (ℕ × R)
+def addCore : List (MvDegrees nvars × R) → List (MvDegrees nvars × R) → List (MvDegrees nvars × R)
   | [], y => y
   | x, [] => x
-  | (i, a) :: x, (j, b) :: y =>
-    if i < j then
-      (j, b) :: addCore ((i, a) :: x) y
-    else if j < i then
-      (i, a) :: addCore x ((j, b) :: y)
-    else  -- Don't we want to worry about a+b=0
-      (i, a + b) :: addCore x y
+  | x, y =>
+    x.head.1 > y.head.1 =>
+      x.head :: addCore(x.tail,y)
+    x.head.1 < y.head.1 =>
+      y.head :: addCore(x,y.tail)
+    z:=x.head.2+y.head.2
+    z = 0 => addCore(x.tail,y.tail)
+    (x.head.1 , z) :: addCore(x.tail,y.tail)
 
-theorem addCore_degLt {n : ℕ} : ∀ {x y : List (ℕ × R)},
-    degLt n x → degLt n y → degLt n (addCore x y) := by
-  intro x y hx hy
-  unfold addCore
-  split
-  · exact hy
-  · exact hx
-  · next i a x j b y =>
-    let ⟨hi, hx'⟩ := List.forall_mem_cons.1 hx
-    sorry
---     let .cons hj hy' := hy
---     split
---     · next ij =>
---       constructor
---       · apply addCore_degLt
---         · intro
---           | _, .head _ => exact ij
---           | p, .tail _ hp => exact (hi _ hp).trans ij
---         · exact hj
---       · exact addCore_sorted hx hy'
---     split
---     · next ij =>
---       constructor
---       · apply addCore_degLt
---         · exact hi
---         · intro
---         | _, .head _ => exact ij
---         | p, .tail _ hp => exact (hj _ hp).trans ij
---       · exact addCore_sorted hx' hy
---     · cases (by omega : i = j)
---       constructor
---       · exact addCore_degLt hi hj
---       · exact addCore_sorted hx' hy'
--- termination_by x y => x.length + y.length
+-- theorem addCore_degLt {n : ℕ} : ∀ {x y : List (ℕ × R)},
+--     degLt n x → degLt n y → degLt n (addCore x y) := by
+--   intro x y hx hy
+--   unfold addCore
+--   split
+--   · exact hy
+--   · exact hx
+--   · next i a x j b y =>
+--     let ⟨hi, hx'⟩ := List.forall_mem_cons.1 hx
+--     sorry
+-- --     let .cons hj hy' := hy
+-- --     split
+-- --     · next ij =>
+-- --       constructor
+-- --       · apply addCore_degLt
+-- --         · intro
+-- --           | _, .head _ => exact ij
+-- --           | p, .tail _ hp => exact (hi _ hp).trans ij
+-- --         · exact hj
+-- --       · exact addCore_sorted hx hy'
+-- --     split
+-- --     · next ij =>
+-- --       constructor
+-- --       · apply addCore_degLt
+-- --         · exact hi
+-- --         · intro
+-- --         | _, .head _ => exact ij
+-- --         | p, .tail _ hp => exact (hj _ hp).trans ij
+-- --       · exact addCore_sorted hx' hy
+-- --     · cases (by omega : i = j)
+-- --       constructor
+-- --       · exact addCore_degLt hi hj
+-- --       · exact addCore_sorted hx' hy'
+-- -- termination_by x y => x.length + y.length
 
 theorem addCore_sorted : ∀ {x y : List (ℕ × R)},
     x.Sorted (·.1 > ·.1) → y.Sorted (·.1 > ·.1) →
