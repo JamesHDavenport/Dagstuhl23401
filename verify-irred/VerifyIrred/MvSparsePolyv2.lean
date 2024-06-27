@@ -83,14 +83,14 @@ instance : Zero (MvSparsePoly R nvars) where
   zero := { terms := [], sorted := .nil, nonzero := nofun }
 
 def C (r : R) : MvSparsePoly R nvars := ofSortedList [(0, r)] (List.sorted_singleton _)
--- Need the ofSortedList to deal with r=0
+-- Need the ofSortedList to deal with r=0; note that 0 is the 0 of the MvDegrees monoid
 
 instance : One (MvSparsePoly R nvars) where
   one := C 1
 
-def degLt (a : ℕ) (l : List (ℕ × R)) : Prop := ∀ x ∈ l, x.1 < a
+-- def degLt (a : ℕ) (l : List (ℕ × R)) : Prop := ∀ x ∈ l, x.1 < a
 
--- Relate our structures to the Polynomial of Mathlib
+-- Relate our structures to the MvPolynomial of Mathlib
 noncomputable def MvDegrees.toFinsupp (deg : MvDegrees nvars) : Fin nvars →₀ ℕ :=
   Finsupp.onFinset Finset.univ (fun i => deg.degrees[i]'(by simp [deg.correct, i.2])) (by simp)
 
