@@ -151,7 +151,7 @@ def addCore : List (MvDegrees nvars × R) → List (MvDegrees nvars × R) → Li
 -- --       · exact addCore_sorted hx' hy'
 -- -- termination_by x y => x.length + y.length
 
-theorem addCore_sorted : ∀ {x y : List (ℕ × R)},
+theorem addCore_sorted : ∀ {x y : List (MvDegrees nvars × R)},
     x.Sorted (·.1 > ·.1) → y.Sorted (·.1 > ·.1) →
     (addCore x y).Sorted (·.1 > ·.1) := by
   intro x y hx hy
