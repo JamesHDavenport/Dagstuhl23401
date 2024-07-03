@@ -68,8 +68,9 @@ def addCore : List (ℕ × R) → List (ℕ × R) → List (ℕ × R)
       (j, b) :: addCore ((i, a) :: x) y
     else if j < i then
       (i, a) :: addCore x ((j, b) :: y)
-    else  -- Don't we want to worry about a+b=0
-      (i, a + b) :: addCore x y
+    else  -- Check for a+b=0
+      ( fun c => if c=0 then addCore x y else (i, c) :: addCore x y) (a+b)
+
 
 theorem addCore_degLt {n : ℕ} : ∀ {x y : List (ℕ × R)},
     degLt n x → degLt n y → degLt n (addCore x y) := by
