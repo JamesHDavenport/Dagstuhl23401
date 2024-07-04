@@ -61,16 +61,16 @@ noncomputable def toPoly (x : SparsePoly R) : Polynomial R :=
   toPolyCore x.coeffs
 
 def addCore : List (ℕ × R) → List (ℕ × R) → List (ℕ × R)
-  | [], y => y
-  | x, [] => x
-  | (i, a) :: x, (j, b) :: y =>
+  | [], yy => yy
+  | xx, [] => xx
+  | xx@((i, a) :: x), yy@((j, b) :: y) =>
     if i < j then
-      (j, b) :: addCore ((i, a) :: x) y
+      (j, b) :: addCore xx y
     else if j < i then
-      (i, a) :: addCore x ((j, b) :: y)
+      (i, a) :: addCore x yy
     else  -- Check for a+b=0
       ( fun c => if c=0 then addCore x y else (i, c) :: addCore x y) (a+b)
-
+    termination_by xx yy => xx.length + yy.length
 
 theorem addCore_degLt {n : ℕ} : ∀ {x y : List (ℕ × R)},
     degLt n x → degLt n y → degLt n (addCore x y) := by
