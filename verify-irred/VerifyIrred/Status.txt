@@ -1,0 +1,5 @@
+SparsePoly (line numbers in current version)
+    82: addCore_lt (which I think is needed for sorted) has an unsolved goal
+    141: There's 'constructor' here, but I don't know what it means
+    Bunch of further sorry
+    172: Mul I don't follow the code
