@@ -21,7 +21,8 @@ import Mathlib
 instance : AddCommMonoid (MvDegrees nvars) where
   add a b := {
     degrees := a.degrees.zipWith b.degrees (· + ·)
-    correct := sorry
+    correct := by
+      done
     totalDegree := a.totalDegree + b.totalDegree
     totalDegree_eq := sorry
   }
@@ -52,7 +53,33 @@ instance : AddCommMonoid (MvDegrees nvars) where
   zero_le {x : MvDegrees nvars} : 0 ≤ x
   add_le_add {x y z : MvDegrees nvars} : x ≤ y → x + z ≤ y + z
 
--- def lexordering (a: MvDegrees nvars,b: MvDegrees nvars) : Bool := sorry
+--  weakcomparison ≤ in TeX
+def lexorder (a: MvDegrees nvars) (b: MvDegrees nvars) : Bool := Id.run do
+  for ai in a.degrees, bi in b.degrees do
+     if ai < bi then return true
+     else if ai > bi then return false
+  return true
+
+instance: LE (MvDegrees nvars) where le a b := lexorder a b
+theorem lexorder_total (a: MvDegrees nvars) (b: MvDegrees nvars) :  a ≤ b ∨ b ≤ a := sorry
+
+instance:WOrdering nvars where
+  le a b := lexorder a b
+  le_refl a := or_self_iff.1 (lexorder_total _ _)
+  le_trans := sorry
+  le_antisymm := sorry
+  min := sorry
+  max := sorry
+  compare := sorry
+  le_total := lexorder_total
+  decidableLE := sorry
+  decidableEq := sorry
+  decidableLT := sorry
+  min_def := sorry
+  max_def := sorry
+  compare_eq_compareOfLessAndEq := sorry
+  zero_le := sorry
+  add_le_add := sorry
 -- But also needs to be a member of WOrdering
 
 @[ext] structure MvSparsePoly (R : Type) [CommRing R] (nvars : ℕ) [WOrdering nvars] : Type where

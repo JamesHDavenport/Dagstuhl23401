@@ -169,7 +169,7 @@ def ofList (coeffs : List (ℕ × R)) : SparsePoly R :=
 
 def X : SparsePoly R := ofSortedList [(1, 1)] (List.sorted_singleton _)
 
-instance : Mul (SparsePoly R) where
+instance : Mul (SparsePoly R) where   -- James: I don't follow this
   mul x y :=
     ofList do
       let (i, a) ← x.coeffs
