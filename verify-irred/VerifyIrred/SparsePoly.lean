@@ -82,7 +82,7 @@ theorem addCore_degLt {n : ℕ} : ∀ {x y : List (ℕ × R)},
   · next i a x j b y =>
       split
 --    let ⟨hi, hx'⟩ := List.forall_mem_cons.1 hx
-    sorry
+      sorry
 --     let .cons hj hy' := hy
 --     split
 --     · next ij =>
